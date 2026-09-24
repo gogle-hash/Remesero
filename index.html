@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Remesas</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#202124">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Remesas">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --green:#4f7f2d; --green2:#dcebd4;
+  --blue:#3d5f94; --blue2:#d9e4f4;
+  --grid:#bfc3c7; --text:#111;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#e9e9e9;color:var(--text);font-family:Arial,Helvetica,sans-serif}
+.app{width:min(520px,100vw);margin:0 auto;min-height:100vh;background:#fff}
+.topbar{height:42px;background:#202124;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700}
+.content{padding:8px 7px 14px}
+.label{font-size:11px;font-weight:700;color:#555;margin:0 0 3px}
+.rate-box{display:grid;grid-template-columns:38% 62%;height:43px;border:1px solid var(--grid);margin-bottom:7px}
+.rate-title{background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800}
+.rate-input{border:0;outline:0;background:#cfe3bf;width:100%;text-align:center;font-size:21px;font-weight:800;color:#111}
+.info-row{display:grid;grid-template-columns:38% 62%;height:38px;border:1px solid var(--grid);margin-bottom:7px}
+.info-title{background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800}
+.info-value{background:var(--blue2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800}
+.margin-input{width:100%;height:100%;border:0;outline:0;background:transparent;text-align:center;font-size:18px;font-weight:800;color:#111}
+
+.table-wrap{position:relative;border:1px solid var(--grid);overflow:visible}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{border:1px solid var(--grid);text-align:center;padding:5px 3px}
+th{color:#fff;font-size:14px;font-style:italic;font-weight:800;height:37px}
+th:first-child{background:var(--green);width:33%}
+th:nth-child(2){background:var(--blue);width:40%}
+th:nth-child(3){background:var(--blue);width:27%}
+td.qty{background:var(--green2);font-size:15px;font-weight:800}
+td.client{background:#f4f4f4;font-size:14px;font-weight:800}
+td.profit{background:var(--blue2);font-size:14px;font-weight:800}
+
+.currency-th{position:relative;padding:0!important}
+.currency-button{width:100%;height:36px;border:0;background:transparent;color:#fff;font-size:14px;font-style:italic;font-weight:800;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer}
+.chevron{font-size:17px;line-height:1}
+
+/* Arreglos en el menú desplegable para visibilidad clara */
+.currency-menu{
+  display:none;position:absolute;z-index:100;left:0;top:37px;
+  min-width:210px;width:max-content;max-width:280px;
+  background:#ffffff;border:1px solid #777;box-shadow:0 6px 16px rgba(0,0,0,.3);
+  max-height:260px;overflow-y:auto;text-align:left;
+  font-style:normal;
+}
+.currency-menu.open{display:block}
+.currency-option{
+  padding:9px 11px;border-bottom:1px solid #e2e2e2;background:#ffffff;
+  color:#111111!important;font-size:13px;font-weight:700;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+}
+.currency-option:hover,.currency-option.active{background:var(--green2);color:#0e2807!important}
+.currency-option .rule{font-size:11px;color:#333;font-weight:700;white-space:nowrap}
+
+@media(max-width:360px){
+  th{font-size:12px}.currency-button{font-size:12px}
+  td.qty,td.client,td.profit{font-size:12px}
+  .topbar{height:38px}
+}
+
+.custom-row td{border-top:2px solid var(--green)}
+.custom-cell{padding:3px!important}
+.custom-qty{
+  width:100%;height:30px;border:1px dashed #78995f;background:#fff;
+  text-align:center;font-size:14px;font-weight:800;outline:0;
+  color:#111;
+}
+.custom-qty::placeholder{color:#777;font-weight:700}
+.custom-qty:focus{border:2px solid var(--green);background:#f8fff4}
+
+.developer-credit{
+  margin-top:12px;padding:10px 4px;text-align:center;
+  font-size:12px;font-weight:700;color:#555;
+  border-top:1px solid #ddd;
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">Remesas</div>
+
+  <main class="content">
+    <div class="label">Precio de la moneda base</div>
+    <div class="rate-box">
+      <div class="rate-title">USDT</div>
+      <input id="baseRate" class="rate-input" type="number" min="0" step="0.01" value="755" aria-label="Precio USDT">
+    </div>
+
+    <div class="info-row">
+      <div class="info-title">Margen</div>
+      <div class="info-value"><input id="marginInput" class="margin-input" type="number" min="0" step="0.01" value="10" inputmode="decimal" aria-label="Margen en CUP"></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="currency-th">
+              <button class="currency-button" id="currencyButton" type="button">
+                <span id="thCurrency">Zelle</span><span class="chevron">⌄</span>
+              </button>
+              <div class="currency-menu" id="currencyMenu"></div>
+            </th>
+            <th>Cliente</th>
+            <th>Ganancia</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div class="developer-credit">Desarrollado por JavierSL</div>
+  </main>
+</div>
+
+<script>
+const DEFAULT_MARGIN=10;
+const RANGES=[1,50,100,150,200,250,300];
+const CURRENCIES=[
+{name:"Zelle",type:"percent",value:-7,rule:"−7%"},
+{name:"IBAN",type:"percent",value:3,rule:"+3%"},
+{name:"Sterlinas",type:"percent",value:10,rule:"+10%"},
+{name:"México",type:"units",value:18.3,rule:"18.3 MXN × 1 USDT"},
+{name:"Brasil",type:"units",value:5.60,rule:"5.60 BRL × 1 USDT"},
+{name:"PayPal USD",type:"percent",value:-10,rule:"−10%"},
+{name:"Cash App",type:"percent",value:-10,rule:"−10%"},
+{name:"Western Union",type:"percent",value:-10,rule:"−10%"},
+{name:"PostaPay",type:"percent",value:0,rule:"1×1"},
+{name:"PayPal EUR",type:"percent",value:0,rule:"1×1"},
+{name:"Bizum",type:"percent",value:0,rule:"1×1"},
+{name:"Uruguay",type:"units",value:48,rule:"48 UYU × 1 USDT"},
+{name:"Rusia",type:"units",value:103,rule:"103 RUB × 1 USDT"},
+{name:"Emiratos Árabes",type:"units",value:4.8,rule:"4.8 AED × 1 USDT"},
+{name:"Angola",type:"units",value:1850,rule:"1850 AOA × 1 USDT"},
+{name:"Suriname",type:"units",value:55,rule:"55 SRD × 1 USDT"},
+{name:"Guyana",type:"units",value:450,rule:"450 GYD × 1 USDT"},
+{name:"Venezuela",type:"units",value:1500,rule:"1500 VES × 1 USDT"},
+{name:"Canadá",type:"usdt",value:0.53,rule:"0.53 USDT × 1 CAD"},
+{name:"Ecuador",type:"usdt",value:0.83,rule:"0.83 USDT × 1 USD"},
+{name:"Costa Rica",type:"units",value:650,rule:"650 CRC × 1 USDT"},
+{name:"Argentina",type:"units",value:2000,rule:"2000 ARS × 1 USDT"},
+{name:"Chile",type:"units",value:1500,rule:"1500 CLP × 1 USDT"},
+{name:"Colombia",type:"units",value:4500,rule:"4500 COP × 1 USDT"},
+{name:"Perú",type:"units",value:4.5,rule:"4.5 PEN × 1 USDT"},
+{name:"Bolivia",type:"units",value:15,rule:"15 BOB × 1 USDT"}
+];
+
+const baseRate=document.getElementById("baseRate");
+const marginInput=document.getElementById("marginInput");
+const rows=document.getElementById("rows");
+const thCurrency=document.getElementById("thCurrency");
+const menu=document.getElementById("currencyMenu");
+let selected="Zelle";
+
+function money(n,d=0){
+  if(!Number.isFinite(n))return "—";
+  return "$"+n.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
+}
+function marginValue(){const m=Number(marginInput.value);return Number.isFinite(m)&&m>=0?m:0}
+function saleUSDT(){return Math.max(0,(Number(baseRate.value)||0)-marginValue())}
+function current(){return CURRENCIES.find(c=>c.name===selected)||CURRENCIES[0]}
+function ratePerUnit(c){
+  const sale=saleUSDT();
+  if(c.type==="percent")return sale*(1+c.value/100);
+  return c.value?sale/c.value:0;
+}
+function clientValue(q,c){return q*ratePerUnit(c)}
+function usdtEquivalent(q,c){
+  if(c.type==="percent") return q*(1+c.value/100);
+  if(c.type==="units") return c.value ? q/c.value : 0;
+  if(c.type==="usdt") return q*c.value;
+  return q;
+}
+function profitValue(q,c){return usdtEquivalent(q,c)*marginValue()}
+
+function buildMenu(){
+  menu.innerHTML="";
+  CURRENCIES.forEach(c=>{
+    const b=document.createElement("div");
+    b.className="currency-option"+(c.name===selected?" active":"");
+    b.innerHTML=`<span>${c.name}</span><span class="rule">${c.rule}</span>`;
+    b.addEventListener("click",()=>{
+      selected=c.name;
+      menu.classList.remove("open");
+      update();
+      buildMenu();
+    });
+    menu.appendChild(b);
+  });
+}
+
+document.getElementById("currencyButton").addEventListener("click",e=>{
+  e.stopPropagation();
+  menu.classList.toggle("open");
+});
+document.addEventListener("click",()=>menu.classList.remove("open"));
+
+function update(){
+  const c=current(),sale=saleUSDT();
+  thCurrency.textContent=c.name;
+  rows.innerHTML="";
+  RANGES.forEach(q=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td class="qty">${q.toLocaleString("en-US")}</td>
+      <td class="client">${money(clientValue(q,c),0)}</td>
+      <td class="profit">${money(profitValue(q,c),2)}</td>`;
+    rows.appendChild(tr);
+  });
+
+  const custom=document.createElement("tr");
+  custom.className="custom-row";
+  custom.innerHTML=`<td class="qty custom-cell">
+      <input id="customQty" class="custom-qty" type="number" min="0" step="0.01"
+             inputmode="decimal" placeholder="Cantidad">
+    </td>
+    <td class="client" id="customClient">—</td>
+    <td class="profit" id="customProfit">—</td>`;
+  rows.appendChild(custom);
+
+  const customInput=document.getElementById("customQty");
+  customInput.addEventListener("input",()=>{
+    const q=Number(customInput.value);
+    document.getElementById("customClient").textContent=q>0?money(clientValue(q,c),2):"—";
+    document.getElementById("customProfit").textContent=q>0?money(profitValue(q,c),2):"—";
+  });
+}
+
+baseRate.addEventListener("input",update);
+marginInput.addEventListener("input",update);
+buildMenu();
+update();
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
