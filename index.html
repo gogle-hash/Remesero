@@ -2,1039 +2,152 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Calculadora</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1239b8">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Remesas">
-<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#071018">
+<title>Calculadora Divisas</title>
 <style>
 :root{
-  --green:#006400; 
-  --green2:#0a8f45;
-  --blue:#00008B; 
-  --blue2:#1239b8;
-  --light:#f5f8ff; 
-  --text:#12213d;
-  --grid:#dce4f1;
+  --bg:#f8f6ed;--panel:#fbfaf3;--text:#20252a;--muted:#4c5359;--line:rgba(60,70,72,.24);
+  --shadow:rgba(80,88,88,.18);--green:#168d58;--blue:#1779b9;--red:#bd454c;
+  --glass:rgba(255,255,255,.58);--nav:rgba(255,255,255,.62);--input:#f7f5ec;
 }
+html[data-theme="dark"]{
+  --bg:#071018;--panel:#0a141d;--text:#edf4f5;--muted:#a9b4bb;--line:rgba(202,221,226,.22);
+  --shadow:rgba(0,0,0,.55);--green:#2ab97b;--blue:#45a6e6;--red:#ef626c;
+  --glass:rgba(28,43,53,.66);--nav:rgba(25,34,42,.76);--input:#111d26;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;transition:background .3s,color .3s}
+button,input,select{font:inherit}
+.app{width:min(520px,100%);min-height:100vh;margin:auto;padding:26px 18px 118px;position:relative;overflow:hidden}
+.header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:6px 2px 22px}
+.title{font-size:43px;line-height:1.04;font-weight:300;letter-spacing:-2px;margin:0;max-width:285px}
+.gear{width:68px;height:68px;flex:0 0 68px;border:0;border-radius:50%;display:grid;place-items:center;position:relative;cursor:pointer;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.9),rgba(177,188,190,.42) 47%,rgba(120,133,137,.26) 100%);box-shadow:inset 0 2px 8px rgba(255,255,255,.8),0 10px 22px var(--shadow);backdrop-filter:blur(8px);color:var(--muted);font-size:33px;text-shadow:0 2px 2px rgba(255,255,255,.75)}
+.gear:active{transform:scale(.96)}
+.section{margin-bottom:18px}
+.field-row{display:grid;grid-template-columns:1fr 255px;align-items:center;gap:18px;margin:10px 0}
+.field-label{font-size:24px;font-weight:400;letter-spacing:-.6px}
+.input-shell{height:50px;border:1px solid var(--line);border-radius:11px;background:var(--glass);box-shadow:0 5px 0 rgba(110,120,120,.13),0 7px 15px var(--shadow);display:flex;align-items:center;padding:0 15px;backdrop-filter:blur(8px)}
+.input-shell input{width:100%;border:0;outline:0;background:transparent;color:var(--text);font-size:25px;font-weight:400}
+.table-wrap{margin-top:22px;position:relative;overflow:visible}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:17px}
+th,td{border-bottom:1px solid var(--line);height:43px;text-align:center;padding:4px 7px}
+th{font-weight:400;font-size:21px;border-bottom:2px solid var(--line)}
+th:first-child{width:38%;text-align:left;padding-left:15px}
+th:nth-child(2){width:34%}
+th:nth-child(3){width:28%}
+.selector{height:47px;width:100%;border:1px solid var(--line);border-radius:11px;background:linear-gradient(135deg,var(--glass),rgba(225,228,220,.32));box-shadow:0 4px 0 rgba(110,120,120,.12),0 5px 12px var(--shadow);color:var(--text);display:flex;align-items:center;justify-content:space-between;padding:0 11px;font-size:20px;cursor:pointer}
+.chev{font-size:24px;line-height:1;transform:translateY(-2px)}
+.dropdown{position:absolute;z-index:50;left:0;top:60px;width:min(300px,78vw);max-height:310px;overflow:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:0 18px 40px var(--shadow);display:none}
+.dropdown.show{display:block;animation:drop .18s ease}
+@keyframes drop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.option{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center;cursor:pointer;color:var(--text);font-size:16px}
+.option:last-child{border-bottom:0}.option.active{background:rgba(40,150,100,.12);font-weight:700}.rule{font-size:11px;color:var(--muted);white-space:nowrap}
+td.name{text-align:left;padding-left:13px;font-size:17px}
+tr.green td{color:var(--green);background:linear-gradient(90deg,transparent,rgba(40,180,120,.10),transparent)}
+tr.blue td{color:var(--blue);background:linear-gradient(90deg,transparent,rgba(60,150,220,.10),transparent)}
+tr.red td{color:var(--red);background:linear-gradient(90deg,transparent,rgba(220,80,90,.10),transparent)}
+td.money{font-size:17px;white-space:nowrap}
+.custom td{height:52px;font-size:19px}.custom .custom-label{text-align:left;padding-left:15px}.custom input{width:100%;border:0;outline:0;background:transparent;color:var(--text);font-size:18px;text-align:center}
+.custom input::placeholder{color:var(--muted);opacity:.75}
+.credit{text-align:center;font-size:15px;margin:28px 0 25px;color:var(--text)}
+.more{position:absolute;right:25px;bottom:100px;width:58px;height:58px;border:1px solid var(--line);border-radius:50%;background:var(--glass);color:var(--muted);font-size:23px;letter-spacing:4px;box-shadow:0 8px 20px var(--shadow);backdrop-filter:blur(10px);cursor:pointer}
+.more:active{transform:scale(.95)}
+.bottom{position:fixed;z-index:100;left:50%;bottom:15px;transform:translateX(-50%);width:min(500px,calc(100% - 28px));height:91px;border:1px solid var(--line);border-radius:32px;background:var(--nav);box-shadow:0 10px 35px var(--shadow),inset 0 1px rgba(255,255,255,.55);backdrop-filter:blur(18px);display:flex;padding:8px}
+.nav{flex:1;border:0;background:transparent;border-radius:25px;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;font-size:17px}
+.nav.active{color:var(--text);background:rgba(255,255,255,.16)}
+.nav-icon{height:40px;display:grid;place-items:center;font-size:31px;filter:drop-shadow(0 4px 4px rgba(0,0,0,.16))}
+/* Remesas: tabla más compacta para evitar desplazamiento vertical */
+.mode-remesas table{font-size:15px}
+.mode-remesas th,.mode-remesas td{height:38px;padding:3px 6px}
+.mode-remesas th{font-size:18px}
+.mode-remesas td.name{font-size:15px;padding-left:12px}
+.mode-remesas td.money{font-size:15px}
+.mode-remesas .selector{height:43px;font-size:18px;padding:0 10px}
+.mode-remesas .chev{font-size:21px}
+.mode-remesas .custom td{height:42px}
 
-/* 🌙 Variables y estilos para el Modo Oscuro */
-body.dark-mode {
-  --light: #0d1117;
-  --text: #c9d1d9;
-  --grid: #30363d;
-  --green: #2ea043;
-  --green2: #238636;
-  --blue: #1f6feb;
-  --blue2: #388bfd;
-  background: var(--light);
-}
-body.dark-mode .app { background: #0d1117; box-shadow: none; border-left: 1px solid var(--grid); border-right: 1px solid var(--grid); }
-body.dark-mode table, body.dark-mode .currency-menu, body.dark-mode .currency-option, body.dark-mode .settings-sheet, body.dark-mode .first-rules-card, body.dark-mode .update-card { background: #161b22; }
-body.dark-mode .rate-box, body.dark-mode .info-row { background: #161b22; }
-body.dark-mode .rate-box:focus-within, body.dark-mode .info-row:focus-within { background: #0d1117; }
-body.dark-mode td.client { background: #161b22; color: #c9d1d9; }
-body.dark-mode td.profit { background: #0d1117; color: #388bfd; }
-body.dark-mode td.qty { background: #101c15; color: var(--green); }
-body.dark-mode .pill-option.active { background: #0d1117; color: #388bfd; border: 1px solid var(--grid); }
-body.dark-mode .bottom-nav { background: #161b22; border-top: 1px solid var(--grid); box-shadow: none; }
-body.dark-mode .nav-tab.active { background: #21262d; color: #388bfd; }
-body.dark-mode .custom-row td { background: #0d1117; border-top-color: var(--green2); }
-body.dark-mode .custom-cell { background: #0d1117!important; }
-body.dark-mode .custom-qty { background: #161b22; color: #c9d1d9; }
-body.dark-mode .custom-qty:focus { background: #0d1117; border-color: var(--green2); }
-body.dark-mode .settings-note { background: #0d1117; border-color: var(--grid); color: #c9d1d9; }
-body.dark-mode .settings-select, body.dark-mode .settings-input { background: #0d1117; border-color: var(--grid); color: #c9d1d9; }
-body.dark-mode .rule-panel { background: #161b22; border-color: var(--grid); }
-body.dark-mode .rule-field select, body.dark-mode .rule-field input { background: #0d1117; color: #c9d1d9; border-color: var(--grid); }
-body.dark-mode .settings-close, body.dark-mode .settings-reset { background: #21262d; color: #c9d1d9; }
-body.dark-mode .currency-option { color: #c9d1d9; border-bottom: 1px solid var(--grid); }
-body.dark-mode .currency-option .rule { background: #21262d; color: var(--blue2); }
-body.dark-mode .currency-option.active .rule { background: #101c15; color: var(--green2); }
-body.dark-mode .currency-option:hover, body.dark-mode .currency-option.active { background: #101c15; color: var(--green2); }
-body.dark-mode .first-rules-notice { background: rgba(0,0,0,0.7); }
-/* Fin estilos Modo Oscuro */
-
-*{box-sizing:border-box}
-body{margin:0;background:var(--light);color:var(--text);font-family:Arial,Helvetica,sans-serif; transition: background 0.3s, color 0.3s;}
-.app{width:min(520px,100vw);margin:0 auto;min-height:100vh;background:#fff;box-shadow:0 0 20px rgba(0,0,0,0.05);position:relative;padding-bottom:70px; transition: 0.3s;}
-
-/* Topbar moderna con gradiente */
-.topbar{
-  height:55px;
-  background:linear-gradient(100deg, var(--green2), var(--blue2));
-  color:#fff;display:flex;align-items:center;justify-content:center;
-  font-size:20px;font-weight:800;
-  border-radius:0 0 20px 20px;
-  box-shadow:0 6px 15px rgba(18,57,184,.2);
-  margin-bottom:20px;
-  transition: 0.3s;
-}
-.content{padding:8px 15px 20px}
-
-/* Cajas de inputs redondeadas y modernas */
-.label{font-size:12px;font-weight:800;color:var(--blue2);margin:0 0 6px;padding-left:4px;}
-.rate-box, .info-row {
-  display:grid;grid-template-columns:38% 62%;
-  height:48px;
-  border:2px solid var(--grid);
-  border-radius:14px;
-  margin-bottom:15px;
-  overflow:hidden;
-  transition: .2s;
-  background: #f8faff;
-}
-.rate-box:focus-within, .info-row:focus-within {
-  border-color: var(--blue2);
-  box-shadow: 0 0 0 4px rgba(18,57,184,.09);
-  background: #fff;
-}
-
-.rate-title{background:linear-gradient(145deg, var(--green2), var(--green));color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
-.rate-input{border:0;outline:0;background:transparent;width:100%;text-align:center;font-size:20px;font-weight:900;color:var(--text)}
-
-.info-title{background:linear-gradient(145deg, var(--blue2), var(--blue));color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
-.info-value{display:flex;align-items:center;justify-content:center;}
-.margin-input{width:100%;height:100%;border:0;outline:0;background:transparent;text-align:center;font-size:19px;font-weight:900;color:var(--text)}
-
-/* Ocultar elementos */
-.hidden { display: none !important; }
-
-/* Selector de dirección de cálculo (Pill Toggle) */
-.pill-toggle {
-  display: flex;
-  background: var(--grid);
-  border-radius: 12px;
-  padding: 4px;
-  margin-bottom: 12px;
-}
-.pill-option {
-  flex: 1;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--blue2);
-  padding: 10px 0;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.pill-option.active {
-  background: #fff;
-  color: var(--blue2);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-/* Tabla modernizada */
-.table-wrap{
-  position:relative;
-  border:1px solid var(--grid);
-  border-radius:14px;
-  overflow:hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,.03);
-}
-table{width:100%;border-collapse:collapse;table-layout:fixed;background:#fff;}
-th,td{border:1px solid var(--grid);text-align:center;padding:8px 4px}
-th{color:#fff;font-size:13px;font-weight:800;height:42px}
-th:first-child{background:var(--green2);width:33%}
-th:nth-child(2){background:var(--blue2);width:40%}
-th:nth-child(3){background:var(--blue2);width:27%}
-
-td.qty{background:#e9f8ef;color:var(--green);font-size:15px;font-weight:900}
-td.client{background:#fff;color:var(--text);font-size:14px;font-weight:800}
-td.profit{background:#edf2fa;color:var(--blue2);font-size:14px;font-weight:900}
-
-/* Botón y Menú Desplegable */
-.currency-th{position:relative;padding:0!important}
-.currency-button{width:100%;height:42px;border:0;background:transparent;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
-.chevron{font-size:14px;line-height:1;transition:.2s}
-.currency-menu.open + .currency-button .chevron {transform: rotate(180deg);}
-
-.currency-menu{
-  display:none;position:absolute;z-index:100;left:4px;top:44px;
-  min-width:220px;width:max-content;max-width:280px;
-  background:#ffffff;border:1px solid var(--grid);
-  border-radius:12px;
-  box-shadow:0 10px 25px rgba(0,0,0,.15);
-  max-height:280px;overflow-y:auto;text-align:left;
-}
-.currency-menu.open{display:block; animation:fadeIn .2s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
-
-.currency-option{
-  padding:12px 14px;border-bottom:1px solid #edf2fa;background:#ffffff;
-  color:var(--text);font-size:14px;font-weight:700;cursor:pointer;
-  display:flex;justify-content:space-between;align-items:center;gap:10px;
-  transition:.1s;
-}
-.currency-option:last-child{border-bottom:0;}
-.currency-option:hover,.currency-option.active{background:#e9f8ef;color:var(--green2)}
-.currency-option .rule{font-size:11px;color:var(--blue2);font-weight:700;white-space:nowrap;background:#f5f8ff;padding:2px 6px;border-radius:6px;}
-.currency-option.active .rule{background:#c6eed7;color:var(--green2);}
-
-@media(max-width:360px){
-  th{font-size:11px}.currency-button{font-size:12px}
-  td.qty,td.client,td.profit{font-size:12px}
-  .content{padding:8px 10px 20px}
-}
-
-.custom-row td{border-top:2px solid var(--green2); background: #f8faff;}
-.custom-cell{padding:5px!important; background:#fff!important;}
-.custom-qty{
-  width:100%;height:34px;border:1.5px dashed var(--green2);
-  border-radius:8px;background:#f8faff;
-  text-align:center;font-size:14px;font-weight:900;outline:0;
-  color:var(--text);transition:.2s;
-}
-.custom-qty::placeholder{color:var(--blue2);font-weight:700;opacity:0.7;}
-.custom-qty:focus{border:2px solid var(--green2);background:#fff;box-shadow: 0 2px 8px rgba(10,143,69,.15);}
-
-.developer-credit{
-  margin-top:25px;padding:15px 4px;text-align:center;
-  font-size:13px;font-weight:800;color:var(--blue2);
-}
-
-/* Navegación Inferior (Tabs) */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(520px, 100vw);
-  height: 65px;
-  background: #ffffff;
-  display: flex;
-  box-shadow: 0 -5px 20px rgba(0,0,0,0.06);
-  border-radius: 20px 20px 0 0;
-  z-index: 999;
-}
-.nav-tab {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #94a3b8;
-  font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: 0.2s;
-  border-radius: 20px;
-  margin: 5px;
-}
-.nav-tab.active {
-  background: #f5f8ff;
-  color: var(--blue2);
-}
-.nav-icon {
-  font-size: 22px;
-  margin-bottom: 2px;
-}
-
-.rule-panel{display:none!important;margin-top:12px;padding:12px;border:1px solid var(--grid);border-radius:14px;background:#f7faff}.rule-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.rule-title{font-size:12px;font-weight:800;color:var(--text)}.rule-current{font-size:10px;color:var(--text)}.rule-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rule-field label{font-size:10px;margin:0 0 5px;color:var(--text)}.rule-field select,.rule-field input{width:100%;height:38px;border:1px solid var(--grid);border-radius:10px;background:#fff;padding:0 9px;color:var(--text)}.rule-save{margin-top:9px;width:100%;height:38px;border:0;border-radius:10px;background:linear-gradient(100deg,var(--green2),var(--blue));color:#fff;font-weight:800;font-size:11px}.rule-note{font-size:9px;color:var(--text);margin-top:7px;line-height:1.35}.hidden{display:none!important}.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#10213b;color:#fff;padding:10px 14px;border-radius:11px;font-size:11px;z-index:99;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
-</style>
-
-<style id="settings-modern-style">
-.settings-btn{border:0;width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#eef4ff,#e8f8ef);color:#123b9b;font-size:19px;box-shadow:0 7px 18px #183b7020;transition:.2s}
-.settings-btn:active{transform:scale(.94)}
-.top-settings{flex:0 0 42px;margin-left:10px;display:grid;place-items:center;cursor:pointer}
-.topbar{justify-content:space-between;padding:0 12px 0 20px}
-.topbar #topbarText{flex:1;text-align:center}
-.topbar .top-settings{margin-right:0}
-.settings-modal{position:fixed;inset:0;background:#07152b66;backdrop-filter:blur(7px);z-index:9999;display:none;align-items:flex-end;justify-content:center;padding:12px}
-.settings-modal.show{display:flex}
-.settings-sheet{width:min(620px,100%);max-height:86vh;overflow:auto;background:#fff;border-radius:26px 26px 18px 18px;box-shadow:0 20px 55px #07152b44;animation:sheetIn .25s ease; padding-bottom: 20px;}
-@keyframes sheetIn{from{transform:translateY(35px);opacity:0}to{transform:none;opacity:1}}
-.settings-head{padding:18px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--grid)}
-.settings-head h3{margin:0;font-size:17px}.settings-close{border:0;background:#edf2f8;width:36px;height:36px;border-radius:12px;font-size:20px;color:#51627b}
-.settings-body{padding:16px 18px 20px}.settings-note{background:linear-gradient(135deg,#eef7ff,#effaf3);border:1px solid #dcecf0;border-radius:15px;padding:12px;font-size:11px;color:#53677f;line-height:1.5;margin-bottom:14px}
-.settings-select,.settings-input{width:100%;height:45px;border:1px solid #dbe4ef;border-radius:12px;background:#f8faff;padding:0 11px;outline:0}
-.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.settings-label{display:block;font-size:11px;font-weight:800;color:var(--text);margin:10px 0 6px}
-.settings-save{width:100%;height:45px;border:0;border-radius:13px;background:linear-gradient(100deg,#0a9147,#2349c7);color:white;font-weight:800;margin-top:15px}
-.settings-reset{width:100%;height:42px;border:0;border-radius:12px;background:#edf2f8;color:#29405f;font-weight:700;margin-top:8px}
-.first-update{position:fixed;inset:0;background:#07152b88;backdrop-filter:blur(8px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
-.first-update.show{display:flex}.update-card{width:min(430px,100%);background:#fff;border-radius:25px;padding:24px;box-shadow:0 25px 70px #07152b55;text-align:center;animation:pop .3s ease}
-@keyframes pop{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
-.update-icon{width:68px;height:68px;margin:0 auto 13px;border-radius:21px;background:linear-gradient(135deg,#0a9147,#2349c7);color:#fff;display:grid;place-items:center;font-size:29px;box-shadow:0 12px 25px #1743a333}
-.update-card h2{margin:0 0 8px;font-size:21px}.update-card p{margin:0;color:#687991;font-size:13px;line-height:1.55}.update-card button{width:100%;height:45px;border:0;border-radius:13px;margin-top:17px;background:linear-gradient(100deg,#0a9147,#2349c7);color:#fff;font-weight:800}
-
-/* Estilo para el Toggle de Tema Oscuro */
-.theme-toggle-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--grid);
-  padding: 12px 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-}
-.theme-toggle-container span {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text);
-}
-.theme-toggle-container input[type="checkbox"] {
-  transform: scale(1.3);
-  cursor: pointer;
-}
+/* Divisas mode */
+#divisasView{display:none}.mode-remesas #divisasView{display:none}.mode-divisas #divisasView{display:block}.mode-divisas #remesasView{display:none}
+.mode-divisas .title{font-size:43px}
+.mode-divisas .field-row{grid-template-columns:1fr 170px}.mode-divisas .field-label{font-size:23px}.mode-divisas .input-shell{height:50px}.mode-divisas .input-shell input{font-size:25px}
+.mode-divisas .table-wrap{margin-top:22px}
+.mode-divisas th:first-child{width:42%}.mode-divisas th:nth-child(2){width:31%}.mode-divisas th:nth-child(3){width:27%}
+/* modal */
+.overlay{position:fixed;inset:0;z-index:500;background:rgba(5,12,18,.48);backdrop-filter:blur(7px);display:none;align-items:flex-end;justify-content:center;padding:14px}
+.overlay.show{display:flex}.sheet{width:min(520px,100%);max-height:88vh;overflow:auto;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:26px;padding:20px;box-shadow:0 25px 70px rgba(0,0,0,.38);animation:sheet .22s ease}
+@keyframes sheet{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.sheet h2{font-size:21px;margin:0}.close{width:38px;height:38px;border:0;border-radius:12px;background:rgba(120,130,140,.13);color:var(--text);font-size:23px}
+.settings-label{font-size:12px;font-weight:800;color:var(--muted);display:block;margin:13px 0 6px}.settings-input,.settings-select{width:100%;height:46px;border:1px solid var(--line);border-radius:12px;background:var(--input);color:var(--text);padding:0 12px;outline:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.save{width:100%;height:48px;border:0;border-radius:13px;background:var(--text);color:var(--bg);font-weight:800;margin-top:16px}.reset{width:100%;height:43px;border:0;border-radius:13px;background:rgba(120,130,140,.12);color:var(--text);font-weight:700;margin-top:8px}.theme-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.theme-btn{height:42px;border:1px solid var(--line);border-radius:11px;background:var(--input);color:var(--text);font-size:12px}.theme-btn.active{outline:2px solid var(--text)}
+.toast{position:fixed;z-index:900;left:50%;bottom:120px;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:var(--text);color:var(--bg);padding:10px 15px;border-radius:12px;font-size:13px;transition:.22s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.notice{position:fixed;inset:0;z-index:800;background:rgba(5,12,18,.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}.notice.show{display:flex}.notice-card{width:min(380px,100%);background:var(--panel);border:1px solid var(--line);border-radius:25px;padding:24px;text-align:center;box-shadow:0 25px 70px rgba(0,0,0,.35)}.notice-icon{width:62px;height:62px;border-radius:19px;margin:0 auto 13px;display:grid;place-items:center;font-size:30px;background:var(--text);color:var(--bg)}.notice h2{margin:0 0 8px;font-size:21px}.notice p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}.notice button{width:100%;height:46px;border:0;border-radius:13px;background:var(--text);color:var(--bg);font-weight:800;margin-top:18px}
+@media(max-width:390px){.app{padding-left:13px;padding-right:13px}.title,.mode-divisas .title{font-size:38px}.gear{width:62px;height:62px;flex-basis:62px;font-size:30px}.field-row{grid-template-columns:1fr 190px;gap:10px}.field-label{font-size:23px}th{font-size:22px}td.name{font-size:20px}td.money{font-size:19px}.bottom{height:84px}.credit{margin-top:38px}}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="topbar" id="topbarTitle">
-    <span id="topbarText">Calculadora Remesas</span>
-    <button class="settings-btn top-settings" type="button" aria-label="Ajustes" onclick="openRuleSettings(window.currentMode || 'remesas')">⚙️</button>
-  </div>
-
-  <main class="content">
-    
-    <!-- CONTROLES PARA REMESAS -->
-    <div id="remesasInputs">
-      <div class="label">Precio de la moneda base</div>
-      <div class="rate-box">
-        <div class="rate-title">USDT</div>
-        <input id="baseRate" class="rate-input" type="number" min="0" step="0.01" value="760" aria-label="Precio USDT">
-      </div>
-
-      <div class="label">Configuración de ganancias</div>
-      <div class="info-row">
-        <div class="info-title">Margen</div>
-        <div class="info-value"><input id="marginInput" class="margin-input" type="number" min="0" step="0.01" value="10" inputmode="decimal"></div>
-      </div>
+<div id="app" class="app mode-divisas">
+  <section id="remesasView">
+    <header class="header"><h1 class="title">Calculadora<br>Remesas</h1><button class="gear" onclick="openSettings()">⚙</button></header>
+    <div class="section">
+      <div class="field-row"><div class="field-label">Precio USDT</div><div class="input-shell"><input id="baseRate" type="number" value="760" step="0.01" inputmode="decimal"></div></div>
+      <div class="field-row"><div class="field-label">Margen</div><div class="input-shell"><input id="margin" type="number" value="10" step="0.01" inputmode="decimal"></div></div>
     </div>
+    <div class="table-wrap"><table><thead><tr><th><button class="selector" id="remesaSelector"><span id="remesaName">Zelle</span><span class="chev">⌄</span></button><div class="dropdown" id="remesaMenu"></div></th><th>Cliente</th><th>Ganancia</th></tr></thead><tbody id="remesaRows"></tbody></table></div>
+    <div class="credit">Desarrollado por *Javi&Pau*</div>
+  </section>
 
-    <!-- CONTROLES PARA DIVISAS -->
-    <div id="divisasInputs" class="hidden">
-      <div class="label">Porcentajes de la transacción</div>
-      <div style="display:flex; gap:10px; margin-bottom: 12px;">
-        <div class="info-row" style="flex:1; margin-bottom:0; grid-template-columns: 45% 55%;">
-          <div class="info-title" style="background:var(--blue); font-size:13px;">Costo %</div>
-          <div class="info-value"><input id="costoDivisa" class="margin-input" type="number" min="0" step="0.1" value="6"></div>
-        </div>
-        <div class="info-row" style="flex:1; margin-bottom:0; grid-template-columns: 45% 55%;">
-          <div class="info-title" style="background:var(--green2); font-size:13px;">Venta %</div>
-          <div class="info-value"><input id="ventaDivisa" class="margin-input" type="number" min="0" step="0.1" value="10"></div>
-        </div>
-      </div>
-
-      <!-- Selector Inteligente -->
-      <div class="pill-toggle" id="divisaDirectionToggle">
-        <div class="pill-option active" id="btnCalcUSD" onclick="setDivisaCalc('usd')">Calculas por USD</div>
-        <div class="pill-option" id="btnCalcDivisa" onclick="setDivisaCalc('divisa')">El cliente tiene...</div>
-      </div>
+  <section id="divisasView">
+    <header class="header"><h1 class="title">Calculadora<br>Divisas</h1><button class="gear" onclick="openSettings()">⚙</button></header>
+    <div class="section">
+      <div class="field-row"><div class="field-label">Costo %</div><div class="input-shell"><input id="costo" type="number" value="6" step="0.1" inputmode="decimal"></div></div>
+      <div class="field-row"><div class="field-label">Venta %</div><div class="input-shell"><input id="venta" type="number" value="7" step="0.1" inputmode="decimal"></div></div>
     </div>
-
-    <!-- Regla editable de la calculadora activa -->
-    <div class="rule-panel" id="rulePanel">
-      <div class="rule-head">
-        <div>
-          <div class="rule-title">⚙️ Regla de cálculo</div>
-          <div class="rule-current" id="ruleCurrent">Zelle · −7%</div>
-        </div>
-      </div>
-      <div class="rule-fields">
-        <div class="rule-field" id="ruleTypeWrap">
-          <label>Tipo de regla</label>
-          <select id="ruleType">
-            <option value="percent">Porcentaje</option>
-            <option value="units">Unidades por 1 USDT</option>
-            <option value="usdt">Valor USDT</option>
-          </select>
-        </div>
-        <div class="rule-field">
-          <label id="ruleValueLabel">Valor</label>
-          <input id="ruleValue" type="number" step="0.01" inputmode="decimal">
-        </div>
-      </div>
-      <div class="rule-fields" id="divisaRuleFields" style="margin-top:8px">
-        <div class="rule-field"><label>Costo %</label><input id="ruleCosto" type="number" step="0.1" inputmode="decimal"></div>
-        <div class="rule-field"><label>Venta %</label><input id="ruleVenta" type="number" step="0.1" inputmode="decimal"></div>
-      </div>
-      <button class="rule-save" id="saveRuleBtn">Guardar regla</button>
-      <div class="rule-note">La regla se guarda para esta divisa y permanece aunque cierres la app. Más adelante el administrador podrá enviar las reglas oficiales.</div>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th class="currency-th">
-              <button class="currency-button" id="currencyButton" type="button">
-                <span id="thCurrency">Zelle</span><span class="chevron">▼</span>
-              </button>
-              <div class="currency-menu" id="currencyMenu"></div>
-            </th>
-            <th id="thCliente">Cliente Paga</th>
-            <th>Ganancia</th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
-
-    <div class="developer-credit">Desarrollado por *Javi&Pau*</div><div id="toast" class="toast"></div>
-  </main>
-
-  <!-- Barra de Navegación Inferior -->
-  <nav class="bottom-nav">
-    <div class="nav-tab active" id="tabRemesas" onclick="switchTab('remesas')">
-      <span class="nav-icon">💸</span>
-      <span>Remesas</span>
-    </div>
-    <div class="nav-tab" id="tabDivisas" onclick="switchTab('divisas')">
-      <span class="nav-icon">💳</span>
-      <span>Divisas</span>
-    </div>
-  </nav>
+    <div class="table-wrap"><table><thead><tr><th><button class="selector" id="divisaSelector"><span id="divisaName">Clásica</span><span class="chev">⌄</span></button><div class="dropdown" id="divisaMenu"></div></th><th>Cliente</th><th>Ganancia</th></tr></thead><tbody id="divisaRows"></tbody></table></div>
+    <div class="credit">Desarrollado por Javi&Pau</div>
+  </section>
 </div>
 
+<nav class="bottom"><button class="nav" id="navRemesas" onclick="switchMode('remesas')"><span class="nav-icon">💵</span><span>Remesas</span></button><button class="nav active" id="navDivisas" onclick="switchMode('divisas')"><span class="nav-icon">🪙</span><span>Divisas</span></button></nav>
+
+<div class="overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()"><div class="sheet"><div class="sheet-head"><h2>⚙️ Ajustes</h2><button class="close" onclick="closeSettings()">×</button></div><div id="remesaSettings"><label class="settings-label">Método / divisa</label><select class="settings-select" id="ruleCurrency"></select><div class="grid"><div><label class="settings-label">Tipo</label><select class="settings-select" id="ruleType"><option value="percent">Porcentaje</option><option value="units">Unidades por 1 USDT</option><option value="usdt">Valor USDT</option></select></div><div><label class="settings-label">Valor</label><input class="settings-input" id="ruleValue" type="number" step="0.01"></div></div></div><div id="divisaSettings" style="display:none"><label class="settings-label">Divisa</label><select class="settings-select" id="divisaRuleCurrency"></select><div class="grid"><div><label class="settings-label">Costo %</label><input class="settings-input" id="ruleCosto" type="number" step="0.1"></div><div><label class="settings-label">Venta %</label><input class="settings-input" id="ruleVenta" type="number" step="0.1"></div></div></div><label class="settings-label">Tema</label><div class="theme-buttons"><button class="theme-btn" data-theme="light">Claro</button><button class="theme-btn" data-theme="dark">Oscuro</button><button class="theme-btn" data-theme="system">Sistema</button></div><button class="save" onclick="saveSettings()">Guardar cambios</button><button class="reset" onclick="resetCurrentRule()">Restaurar regla original</button></div></div>
+
+<div class="notice" id="notice"><div class="notice-card"><div class="notice-icon">⚙</div><h2>Nueva opción disponible</h2><p>Ahora puedes editar las reglas de cálculo directamente desde <b>Ajustes ⚙️</b>.</p><button onclick="closeNotice()">Entendido</button></div></div>
+<div class="toast" id="toast"></div>
+
 <script>
-const DEFAULT_MARGIN=10;
 const RANGES=[1,50,100,150,200,250,300];
-
-// Lista de Remesas
-const CURRENCIES_REMESAS=[
-{name:"Zelle",type:"percent",value:-7,rule:"−7%"},
-{name:"IBAN",type:"percent",value:3,rule:"+3%"},
-{name:"Sterlinas",type:"percent",value:10,rule:"+10%"},
-{name:"México",type:"units",value:18.5,rule:"18.5 MXN × 1 USDT"},
-{name:"Brasil",type:"units",value:5.60,rule:"5.60 BRL × 1 USDT"},
-{name:"PayPal USD",type:"percent",value:-10,rule:"−10%"},
-{name:"Cash App",type:"percent",value:-10,rule:"−10%"},
-{name:"Western Union",type:"percent",value:-10,rule:"−10%"},
-{name:"PostaPay",type:"percent",value:0,rule:"1×1"},
-{name:"PayPal EUR",type:"percent",value:0,rule:"1×1"},
-{name:"Bizum",type:"percent",value:0,rule:"1×1"},
-{name:"Uruguay",type:"units",value:48,rule:"48 UYU × 1 USDT"},
-{name:"Rusia",type:"units",value:103,rule:"103 RUB × 1 USDT"},
-{name:"Emiratos Árabes",type:"units",value:4.8,rule:"4.8 AED × 1 USDT"},
-{name:"Angola",type:"units",value:1850,rule:"1850 AOA × 1 USDT"},
-{name:"Suriname",type:"units",value:55,rule:"55 SRD × 1 USDT"},
-{name:"Guyana",type:"units",value:450,rule:"450 GYD × 1 USDT"},
-{name:"Venezuela",type:"units",value:1500,rule:"1500 VES × 1 USDT"},
-{name:"Canadá",type:"usdt",value:0.53,rule:"0.53 USDT × 1 CAD"},
-{name:"Ecuador",type:"usdt",value:0.83,rule:"0.83 USDT × 1 USD"},
-{name:"Costa Rica",type:"units",value:650,rule:"650 CRC × 1 USDT"},
-{name:"Argentina",type:"units",value:2000,rule:"2000 ARS × 1 USDT"},
-{name:"Chile",type:"units",value:1500,rule:"1500 CLP × 1 USDT"},
-{name:"Colombia",type:"units",value:4500,rule:"4500 COP × 1 USDT"},
-{name:"Perú",type:"units",value:4.5,rule:"4.5 PEN × 1 USDT"},
-{name:"Bolivia",type:"units",value:15,rule:"15 BOB × 1 USDT"}
-];
-
-// Lista de Divisas
-const CURRENCIES_DIVISAS=[
-{name:"Clásica", defaultCosto:6, defaultVenta:10, rule:"Costo 6% · Venta 10%"},
-{name:"Prepago", defaultCosto:10, defaultVenta:10, rule:"Costo 10% · Venta 10%"},
-{name:"MLC", defaultCosto:65, defaultVenta:10, rule:"Costo 65% · Venta 10%"}
-];
-
-// Elementos de Remesas
-const baseRate=document.getElementById("baseRate");
-const marginInput=document.getElementById("marginInput");
-
-// Elementos de Divisas
-const costoDivisa=document.getElementById("costoDivisa");
-const ventaDivisa=document.getElementById("ventaDivisa");
-
-// Elementos Globales
-const rows=document.getElementById("rows");
-const thCurrency=document.getElementById("thCurrency");
-const thCliente=document.getElementById("thCliente");
-const menu=document.getElementById("currencyMenu");
-const topbarTitle=document.getElementById("topbarTitle");
-const ruleType=document.getElementById("ruleType");
-const ruleValue=document.getElementById("ruleValue");
-const ruleValueLabel=document.getElementById("ruleValueLabel");
-const ruleCurrent=document.getElementById("ruleCurrent");
-const ruleCosto=document.getElementById("ruleCosto");
-const ruleVenta=document.getElementById("ruleVenta");
-const divisaRuleFields=document.getElementById("divisaRuleFields");
-const ruleTypeWrap=document.getElementById("ruleTypeWrap");
-const saveRuleBtn=document.getElementById("saveRuleBtn");
-
-// Variables de estado
-let currentMode = "remesas"; window.currentMode = currentMode;
-let selectedRemesa = "Zelle";
-let selectedDivisa = "Clásica";
-let divisaCalcMode = "usd"; 
-
-function ruleKey(name){return "remesas_rule_"+encodeURIComponent(name);}
-function divisaRuleKey(name){return "divisas_rule_"+encodeURIComponent(name);}
-function getRemesaRule(c){
-  const saved=localStorage.getItem(ruleKey(c.name));
-  if(saved){try{return JSON.parse(saved)}catch(e){}}
-  return {type:c.type,value:c.value};
-}
-function getDivisaRule(c){
-  const saved=localStorage.getItem(divisaRuleKey(c.name));
-  if(saved){try{return JSON.parse(saved)}catch(e){}}
-  return {costo:c.defaultCosto,venta:c.defaultVenta===undefined?10:c.defaultVenta};
-}
-function ruleText(c){
-  if(currentMode==="remesas"){const r=getRemesaRule(c);if(r.type==="percent") return (r.value>=0?"+":"")+r.value+"%";if(r.type==="units") return r.value+" unidades × 1 USDT";return r.value+" USDT";}
-  const r=getDivisaRule(c);return "Costo "+r.costo+"% · Venta "+r.venta+"%";
-}
-function updateRulePanel(){
-  const c=current();
-  ruleCurrent.textContent=c.name+" · "+ruleText(c);
-  if(currentMode==="remesas"){
-    ruleTypeWrap.classList.remove("hidden"); divisaRuleFields.classList.add("hidden");
-    const r=getRemesaRule(c); ruleType.value=r.type; ruleValue.value=r.value;
-    ruleValueLabel.textContent=r.type==="percent"?"Porcentaje (+ / − %)":r.type==="units"?"Unidades por 1 USDT":"Valor en USDT";
-    saveRuleBtn.textContent="Guardar regla de "+c.name;
-  }else{
-    ruleTypeWrap.classList.add("hidden"); divisaRuleFields.classList.remove("hidden");
-    const r=getDivisaRule(c); ruleCosto.value=r.costo; ruleVenta.value=r.venta;
-    saveRuleBtn.textContent="Guardar regla de "+c.name;
-  }
-}
-function switchTab(mode) {
-  currentMode = mode;
-  window.currentMode = mode;
-  
-  document.getElementById("tabRemesas").classList.toggle("active", mode === "remesas");
-  document.getElementById("tabDivisas").classList.toggle("active", mode === "divisas");
-  
-  document.getElementById("topbarText").textContent = mode === "remesas" ? "Calculadora Remesas" : "Calculadora Divisas";
-  
-  if(mode === "remesas"){
-    document.getElementById("remesasInputs").classList.remove("hidden");
-    document.getElementById("divisasInputs").classList.add("hidden");
-  } else {
-    document.getElementById("remesasInputs").classList.add("hidden");
-    document.getElementById("divisasInputs").classList.remove("hidden");
-  }
-  
-  saveData();
-  buildMenu();
-  update();
-}
-
-function setDivisaCalc(calcMode) {
-  divisaCalcMode = calcMode;
-  document.getElementById("btnCalcUSD").classList.toggle("active", calcMode === "usd");
-  document.getElementById("btnCalcDivisa").classList.toggle("active", calcMode === "divisa");
-  saveData();
-  update();
-}
-
-function getActiveList() {
-  return currentMode === "remesas" ? CURRENCIES_REMESAS : CURRENCIES_DIVISAS;
-}
-
-function getActiveSelected() {
-  return currentMode === "remesas" ? selectedRemesa : selectedDivisa;
-}
-
-function setActiveSelected(name) {
-  if (currentMode === "remesas") selectedRemesa = name;
-  else selectedDivisa = name;
-}
-
-// CARGAR DATOS GUARDADOS
-function loadSavedData() {
-  const savedRate = localStorage.getItem('remesas_baseRate');
-  const savedMargin = localStorage.getItem('remesas_margin');
-  const savedCosto = localStorage.getItem('divisas_costo');
-  const savedVenta = localStorage.getItem('divisas_venta');
-  const savedMode = localStorage.getItem('remesas_mode');
-  const savedSelRemesa = localStorage.getItem('remesas_sel_remesa');
-  const savedSelDivisa = localStorage.getItem('remesas_sel_divisa');
-  const savedCalcMode = localStorage.getItem('divisas_calcMode');
-
-  if (savedRate) baseRate.value = savedRate;
-  if (savedMargin) marginInput.value = savedMargin;
-  if (savedCosto) costoDivisa.value = savedCosto;
-  if (savedVenta) ventaDivisa.value = savedVenta;
-  if (savedCalcMode) divisaCalcMode = savedCalcMode;
-  
-  if (savedSelRemesa && CURRENCIES_REMESAS.some(c => c.name === savedSelRemesa)) selectedRemesa = savedSelRemesa;
-  if (savedSelDivisa && CURRENCIES_DIVISAS.some(c => c.name === savedSelDivisa)) selectedDivisa = savedSelDivisa;
-  
-  document.getElementById("btnCalcUSD").classList.toggle("active", divisaCalcMode === "usd");
-  document.getElementById("btnCalcDivisa").classList.toggle("active", divisaCalcMode === "divisa");
-
-  if (savedMode === "divisas" || savedMode === "remesas") {
-    switchTab(savedMode);
-  } else {
-    buildMenu();
-    update();
-  }
-}
-
-// GUARDAR DATOS ACTUALES
-function saveData() {
-  localStorage.setItem('remesas_baseRate', baseRate.value);
-  localStorage.setItem('remesas_margin', marginInput.value);
-  localStorage.setItem('divisas_costo', costoDivisa.value);
-  localStorage.setItem('divisas_venta', ventaDivisa.value);
-  localStorage.setItem('remesas_mode', currentMode);
-  localStorage.setItem('remesas_sel_remesa', selectedRemesa);
-  localStorage.setItem('remesas_sel_divisa', selectedDivisa);
-  localStorage.setItem('divisas_calcMode', divisaCalcMode);
-}
-
-function money(n,d=0){
-  if(!Number.isFinite(n))return "—";
-  return "$"+n.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
-}
-
-// Lógica Matemática Remesas
-function marginValue(){const m=Number(marginInput.value);return Number.isFinite(m)&&m>=0?m:0}
-function saleUSDT(){return Math.max(0,(Number(baseRate.value)||0)-marginValue())}
-function ratePerUnit(c){
-  const sale=saleUSDT(), r=getRemesaRule(c);
-  if(r.type==="percent")return sale*(1+r.value/100);
-  if(r.type==="units")return r.value?sale/r.value:0;
-  if(r.type==="usdt")return sale*r.value;
-  return sale;
-}
-function clientValueRemesas(q,c){return q*ratePerUnit(c)}
-function usdtEquivalent(q,c){
-  const r=getRemesaRule(c);
-  if(r.type==="percent") return q*(1+r.value/100);
-  if(r.type==="units") return r.value ? q/r.value : 0;
-  if(r.type==="usdt") return q*r.value;
-  return q;
-}
-function profitValueRemesas(q,c){return usdtEquivalent(q,c)*marginValue()}
-
-function current(){
-  const list = getActiveList();
-  const sel = getActiveSelected();
-  return list.find(c=>c.name===sel)||list[0];
-}
-
-function buildMenu(){
-  menu.innerHTML="";
-  const list = getActiveList();
-  const sel = getActiveSelected();
-  
-  list.forEach(c=>{
-    const b=document.createElement("div");
-    b.className="currency-option"+(c.name===sel?" active":"");
-    b.innerHTML=`<span>${c.name}</span><span class="rule">${c.rule}</span>`;
-    
-    b.addEventListener("click",()=>{
-      setActiveSelected(c.name);
-      
-      if(currentMode === "divisas" && c.defaultCosto !== undefined){
-         const r=getDivisaRule(c);
-         costoDivisa.value=r.costo;
-         ventaDivisa.value=r.venta;
-      }
-      
-      menu.classList.remove("open");
-      saveData();
-      update();
-      buildMenu();
-    });
-    menu.appendChild(b);
-  });
-}
-
-document.getElementById("currencyButton").addEventListener("click",e=>{
-  e.stopPropagation();
-  menu.classList.toggle("open");
-});
-document.addEventListener("click",()=>menu.classList.remove("open"));
-
-function update(){
-  const c = current();
-  thCurrency.textContent = c.name;
-  updateRulePanel();
-  rows.innerHTML = "";
-  
-  let placeholderText = "Cant. USD";
-
-  if(currentMode === "remesas"){
-    thCliente.textContent = "Cliente Paga";
-    placeholderText = "Cantidad";
-  } else {
-    thCliente.textContent = c.name;
-    if(divisaCalcMode === "usd"){
-      placeholderText = "Cant. USD";
-    } else {
-      placeholderText = "Cant. " + c.name; 
-    }
-  }
-
-  RANGES.forEach(q=>{
-    const tr=document.createElement("tr");
-    let cVal = 0, pVal = 0, dec = 0;
-
-    if(currentMode === "remesas"){
-      cVal = clientValueRemesas(q, c);
-      pVal = profitValueRemesas(q, c);
-      dec = 0;
-    } else {
-      const dr = getDivisaRule(c);
-      const costo = Number(dr.costo) || 0;
-      const venta = Number(dr.venta) || 0;
-      
-      if(divisaCalcMode === "usd") {
-        cVal = q * (1 + venta/100);
-        pVal = cVal - (q * (1 + costo/100)); 
-      } else {
-        cVal = q / (1 + venta/100);
-        pVal = q - (cVal * (1 + costo/100)); 
-      }
-      dec = 2;
-    }
-
-    tr.innerHTML=`<td class="qty">${q.toLocaleString("en-US")}</td>
-      <td class="client">${money(cVal, dec)}</td>
-      <td class="profit">${money(pVal, 2)}</td>`;
-    rows.appendChild(tr);
-  });
-
-  const custom=document.createElement("tr");
-  custom.className="custom-row";
-  custom.innerHTML=`<td class="qty custom-cell">
-      <input id="customQty" class="custom-qty" type="number" min="0" step="0.01"
-             inputmode="decimal" placeholder="${placeholderText}">
-    </td>
-    <td class="client" id="customClient">—</td>
-    <td class="profit" id="customProfit">—</td>`;
-  rows.appendChild(custom);
-
-  const customInput=document.getElementById("customQty");
-  customInput.addEventListener("input",()=>{
-    const q=Number(customInput.value);
-    let cVal = 0, pVal = 0, dec = 0;
-    
-    if(q>0){
-      if(currentMode === "remesas"){
-        cVal = clientValueRemesas(q, c);
-        pVal = profitValueRemesas(q, c);
-        dec = 0;
-      } else {
-        const dr = getDivisaRule(c);
-        const costo = Number(dr.costo) || 0;
-        const venta = Number(dr.venta) || 0;
-        if(divisaCalcMode === "usd") {
-          cVal = q * (1 + venta/100);
-          pVal = cVal - (q * (1 + costo/100));
-        } else {
-          cVal = q / (1 + venta/100);
-          pVal = q - (cVal * (1 + costo/100));
-        }
-        dec = 2;
-      }
-      document.getElementById("customClient").textContent=money(cVal, dec);
-      document.getElementById("customProfit").textContent=money(pVal, 2);
-    } else {
-      document.getElementById("customClient").textContent="—";
-      document.getElementById("customProfit").textContent="—";
-    }
-  });
-}
-
-saveRuleBtn.addEventListener("click",()=>{
-  const c=current();
-  if(currentMode==="remesas"){
-    const value=Number(ruleValue.value);
-    if(!Number.isFinite(value)){toast("Escribe un valor válido");return;}
-    const r={type:ruleType.value,value:value};
-    localStorage.setItem(ruleKey(c.name),JSON.stringify(r));
-  }else{
-    const costo=Number(ruleCosto.value), venta=Number(ruleVenta.value);
-    if(!Number.isFinite(costo)||!Number.isFinite(venta)){toast("Revisa costo y venta");return;}
-    localStorage.setItem(divisaRuleKey(c.name),JSON.stringify({costo,venta}));
-    costoDivisa.value=costo; ventaDivisa.value=venta;
-    localStorage.setItem('divisas_costo',costo); localStorage.setItem('divisas_venta',venta);
-  }
-  buildMenu(); update(); saveData(); toast("Regla guardada para "+c.name);
-});
-ruleType.addEventListener("change",()=>{ruleValueLabel.textContent=ruleType.value==="percent"?"Porcentaje (+ / − %)":ruleType.value==="units"?"Unidades por 1 USDT":"Valor en USDT";});
-
-function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),1800);}
-
-// Escuchar cambios en los inputs y guardar
-baseRate.addEventListener("input", () => { update(); saveData(); });
-marginInput.addEventListener("input", () => { update(); saveData(); });
-costoDivisa.addEventListener("input", () => { update(); saveData(); });
-ventaDivisa.addEventListener("input", () => { update(); saveData(); });
-
-// Inicializar
-loadSavedData();
-
-if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
-}
+const REMESAS=[
+ ['Zelle','percent',-7,'−7%'],['IBAN','percent',3,'+3%'],['Sterlinas','percent',10,'+10%'],['México','units',18.5,'18.5 MXN × 1 USDT'],['Brasil','units',5.6,'5.60 BRL × 1 USDT'],['PayPal USD','percent',-10,'−10%'],['Cash App','percent',-10,'−10%'],['Western Union','percent',-10,'−10%'],['PostaPay','percent',0,'1×1'],['PayPal EUR','percent',0,'1×1'],['Bizum','percent',0,'1×1'],['Uruguay','units',48,'48 UYU × 1 USDT'],['Rusia','units',103,'103 RUB × 1 USDT'],['Emiratos Árabes','units',4.8,'4.8 AED × 1 USDT'],['Angola','units',1850,'1850 AOA × 1 USDT'],['Suriname','units',55,'55 SRD × 1 USDT'],['Guyana','units',450,'450 GYD × 1 USDT'],['Venezuela','units',1500,'1500 VES × 1 USDT'],['Canadá','usdt',.53,'0.53 USDT × 1 CAD'],['Ecuador','usdt',.83,'0.83 USDT × 1 USD'],['Costa Rica','units',650,'650 CRC × 1 USDT'],['Argentina','units',2000,'2000 ARS × 1 USDT'],['Chile','units',1500,'1500 CLP × 1 USDT'],['Colombia','units',4500,'4500 COP × 1 USDT'],['Perú','units',4.5,'4.5 PEN × 1 USDT'],['Bolivia','units',15,'15 BOB × 1 USDT']
+].map(x=>({name:x[0],type:x[1],value:x[2],rule:x[3]}));
+const DIVISAS=[{name:'Clásica',costo:6,venta:7},{name:'Prepago',costo:10,venta:10},{name:'MLC',costo:65,venta:66}];
+let mode=localStorage.getItem('jp_mode')||'divisas', remesa=localStorage.getItem('jp_remesa')||'Zelle', divisa=localStorage.getItem('jp_divisa')||'Clásica';
+const $=id=>document.getElementById(id); const app=$('app');
+function getRule(c){try{const x=localStorage.getItem('jp_rule_'+c.name);if(x)return JSON.parse(x)}catch(e){}return {type:c.type,value:c.value}}
+function getDivRule(c){try{const x=localStorage.getItem('jp_divrule_'+c.name);if(x)return JSON.parse(x)}catch(e){}return {costo:c.costo,venta:c.venta}}
+function money(n,d=2){return Number.isFinite(n)?'$'+n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'—'}
+function saleUSDT(){return Math.max(0,(Number($('baseRate').value)||0)-(Number($('margin').value)||0))}
+function remRate(c){const r=getRule(c),s=saleUSDT();if(r.type==='percent')return s*(1+r.value/100);if(r.type==='units')return r.value?s/r.value:0;return s*r.value}
+function remClient(q,c){return q*remRate(c)}
+function remProfit(q,c){const r=getRule(c);let eq=r.type==='percent'?q*(1+r.value/100):r.type==='units'?(r.value?q/r.value:0):q*r.value;return eq*(Number($('margin').value)||0)}
+function buildRemMenu(){const m=$('remesaMenu');m.innerHTML=REMESAS.map(c=>`<div class="option ${c.name===remesa?'active':''}" data-name="${c.name}"><span>${c.name}</span><span class="rule">${c.rule}</span></div>`).join('');m.querySelectorAll('.option').forEach(o=>o.onclick=()=>{remesa=o.dataset.name;localStorage.setItem('jp_remesa',remesa);m.classList.remove('show');render()})}
+function buildDivMenu(){const m=$('divisaMenu');m.innerHTML=DIVISAS.map(c=>`<div class="option ${c.name===divisa?'active':''}" data-name="${c.name}"><span>${c.name}</span><span class="rule">Costo ${getDivRule(c).costo}% · Venta ${getDivRule(c).venta}%</span></div>`).join('');m.querySelectorAll('.option').forEach(o=>o.onclick=()=>{divisa=o.dataset.name;const c=DIVISAS.find(x=>x.name===divisa);const r=getDivRule(c);$('costo').value=r.costo;$('venta').value=r.venta;localStorage.setItem('jp_divisa',divisa);m.classList.remove('show');render()})}
+function renderRemesas(){const c=REMESAS.find(x=>x.name===remesa)||REMESAS[0];$('remesaName').textContent=c.name;let html=RANGES.map((q,i)=>`<tr class="${i%3===0?'green':i%3===1?'blue':'red'}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${money(remClient(q,c),0)}</td><td class="money">${money(remProfit(q,c),2)}</td></tr>`).join('');html+=`<tr class="custom"><td class="custom-label"><input id="customRem" type="number" min="0" step=".01" placeholder="Cant. USD"></td><td id="customRemClient">—</td><td id="customRemProfit">—</td></tr>`;$('remesaRows').innerHTML=html;const inp=$('customRem');inp.oninput=()=>{const q=Number(inp.value);$('customRemClient').textContent=q>0?money(remClient(q,c),0):'—';$('customRemProfit').textContent=q>0?money(remProfit(q,c),2):'—'}}
+function renderDivisas(){const c=DIVISAS.find(x=>x.name===divisa)||DIVISAS[0],r=getDivRule(c);$('divisaName').textContent=c.name;$('costo').value=r.costo;$('venta').value=r.venta;let html=RANGES.slice(3).map((q,i)=>{const costo=Number(r.costo)||0,venta=Number(r.venta)||0;const cliente=q*(1+venta/100);const gan=q*(venta-costo)/100;const cls=i%3===0?'green':i%3===1?'blue':'red';return `<tr class="${cls}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${money(cliente,2)}</td><td class="money">${money(gan,2)}</td></tr>`}).join('');html+=`<tr class="custom"><td class="custom-label"><input id="customDiv" type="number" min="0" step=".01" inputmode="decimal" placeholder="Cant. USD"></td><td id="customDivClient">—</td><td id="customDivProfit">—</td></tr>`;$('divisaRows').innerHTML=html;const inp=$('customDiv');inp.oninput=()=>{const q=Number(inp.value),costo=Number(r.costo)||0,venta=Number(r.venta)||0;if(q>0){$('customDivClient').textContent=money(q*(1+venta/100),2);$('customDivProfit').textContent=money(q*(venta-costo)/100,2)}else{$('customDivClient').textContent='—';$('customDivProfit').textContent='—'}}}
+function render(){app.classList.toggle('mode-divisas',mode==='divisas');app.classList.toggle('mode-remesas',mode==='remesas');$('navDivisas').classList.toggle('active',mode==='divisas');$('navRemesas').classList.toggle('active',mode==='remesas');buildRemMenu();buildDivMenu();renderRemesas();renderDivisas()}
+function switchMode(m){mode=m;localStorage.setItem('jp_mode',m);render()}
+$('remesaSelector').onclick=e=>{e.stopPropagation();$('remesaMenu').classList.toggle('show');$('divisaMenu').classList.remove('show')};$('divisaSelector').onclick=e=>{e.stopPropagation();$('divisaMenu').classList.toggle('show');$('remesaMenu').classList.remove('show')};document.onclick=()=>{$('remesaMenu').classList.remove('show');$('divisaMenu').classList.remove('show')};
+['baseRate','margin','costo','venta'].forEach(id=>$(id).oninput=()=>{if(id==='costo'||id==='venta'){const c=DIVISAS.find(x=>x.name===divisa);localStorage.setItem('jp_divrule_'+c.name,JSON.stringify({costo:Number($('costo').value)||0,venta:Number($('venta').value)||0}))}render()});
+function openSettings(){const isR=mode==='remesas';$('remesaSettings').style.display=isR?'block':'none';$('divisaSettings').style.display=isR?'none':'block';$('ruleCurrency').innerHTML=REMESAS.map(c=>`<option>${c.name}</option>`).join('');$('divisaRuleCurrency').innerHTML=DIVISAS.map(c=>`<option>${c.name}</option>`).join('');$('ruleCurrency').value=remesa;$('divisaRuleCurrency').value=divisa;loadSettingsFields();$('settingsOverlay').classList.add('show')}
+function loadSettingsFields(){if(mode==='remesas'){const c=REMESAS.find(x=>x.name===$('ruleCurrency').value),r=getRule(c);$('ruleType').value=r.type;$('ruleValue').value=r.value}else{const c=DIVISAS.find(x=>x.name===$('divisaRuleCurrency').value),r=getDivRule(c);$('ruleCosto').value=r.costo;$('ruleVenta').value=r.venta}}
+$('ruleCurrency').onchange=loadSettingsFields;$('divisaRuleCurrency').onchange=loadSettingsFields;
+function saveSettings(){if(mode==='remesas'){remesa=$('ruleCurrency').value;localStorage.setItem('jp_remesa',remesa);localStorage.setItem('jp_rule_'+remesa,JSON.stringify({type:$('ruleType').value,value:Number($('ruleValue').value)||0}))}else{divisa=$('divisaRuleCurrency').value;localStorage.setItem('jp_divisa',divisa);localStorage.setItem('jp_divrule_'+divisa,JSON.stringify({costo:Number($('ruleCosto').value)||0,venta:Number($('ruleVenta').value)||0}))}closeSettings();render();toast('Cambios guardados')}
+function resetCurrentRule(){if(mode==='remesas'){localStorage.removeItem('jp_rule_'+$('ruleCurrency').value)}else{localStorage.removeItem('jp_divrule_'+$('divisaRuleCurrency').value)}loadSettingsFields();render();toast('Regla original restaurada')}
+function closeSettings(){$('settingsOverlay').classList.remove('show')}
+function setTheme(t){if(t==='system'){localStorage.removeItem('jp_theme');document.documentElement.removeAttribute('data-theme')}else{localStorage.setItem('jp_theme',t);document.documentElement.setAttribute('data-theme',t)}document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.theme===t))}
+document.querySelectorAll('.theme-btn').forEach(b=>b.onclick=()=>setTheme(b.dataset.theme));function initTheme(){const t=localStorage.getItem('jp_theme')||'dark';setTheme(t)}
+function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>$('toast').classList.remove('show'),1700)}
+function closeNotice(){$('notice').classList.remove('show');localStorage.setItem('jp_notice_1','1')}
+window.addEventListener('load',()=>{initTheme();render();if(!localStorage.getItem('jp_notice_1'))setTimeout(()=>$('notice').classList.add('show'),500)})
 </script>
-
-<!-- MODAL DE AJUSTES -->
-<div id="ruleModal" class="settings-modal" onclick="if(event.target===this)closeRuleSettings()">
-  <div class="settings-sheet">
-    <div class="settings-head">
-      <h3>⚙️ Ajustes</h3>
-      <button class="settings-close" onclick="closeRuleSettings()">×</button>
-    </div>
-    <div class="settings-body">
-      
-      <!-- NUEVO: Toggle de Tema Oscuro -->
-      <div class="theme-toggle-container">
-        <span>🌙 Modo Oscuro</span>
-        <input type="checkbox" id="themeToggle" onchange="toggleDarkMode()">
-      </div>
-      
-      <div class="settings-note">Aquí puedes modificar la regla utilizada por esta calculadora. El cambio se guarda en este dispositivo y se conserva aunque cierres la app.</div>
-      <label class="settings-label">Divisa / método</label>
-      <select id="ruleCurrency" class="settings-select"></select>
-      
-      <div id="remesaRuleFields">
-        <div class="settings-grid">
-          <div><label class="settings-label">Tipo de regla</label><select id="ruleType" class="settings-select">
-            <option value="percent">Porcentaje</option><option value="units">Unidades por 1 USDT</option><option value="usdt">Valor USDT</option>
-          </select></div>
-          <div><label class="settings-label">Valor</label><input id="ruleValue" class="settings-input" type="number" step="0.01"></div>
-        </div>
-      </div>
-      
-      <div id="divisaRuleFieldsModal" style="display:none">
-        <div class="settings-grid">
-          <div><label class="settings-label">Costo %</label><input id="modalRuleCosto" class="settings-input" type="number" step="0.1"></div>
-          <div><label class="settings-label">Venta %</label><input id="modalRuleVenta" class="settings-input" type="number" step="0.1"></div>
-        </div>
-      </div>
-      <button class="settings-save" onclick="saveRuleSettings()">Guardar regla</button>
-      <button class="settings-reset" onclick="resetRuleSettings()">Restaurar regla original</button>
-    </div>
-  </div>
-</div>
-<!-- FIN MODAL DE AJUSTES -->
-
-<div id="firstUpdate" class="first-update">
-  <div class="update-card">
-    <div class="update-icon">⚙️</div>
-    <h2>Nueva opción disponible</h2>
-    <p>Ahora puedes modificar las reglas de cálculo directamente desde <b>Ajustes ⚙️</b> en cada calculadora.</p>
-    <button onclick="closeFirstUpdate()">Entendido</button>
-  </div>
-</div>
-
-<script>
-(function(){
- const KEY='remesero_rule_settings_v2';
- const SEEN='remesero_settings_notice_v2';
- const defaults={
-   "México":{type:"units",value:18.5},
-   "Brasil":{type:"units",value:5.60},
-   "Zelle":{type:"percent",value:-7},
-   "IBAN":{type:"percent",value:3},
-   "Sterlinas":{type:"percent",value:10},
-   "PayPal USD":{type:"percent",value:-10},
-   "Cash App":{type:"percent",value:-10},
-   "Western Union":{type:"percent",value:-10},
-   "PostaPay":{type:"percent",value:0},
-   "PayPal EUR":{type:"percent",value:0},
-   "Bizum":{type:"percent",value:0},
-   "Canadá":{type:"usdt",value:0.53},
-   "Ecuador":{type:"usdt",value:0.83},
-   "Perú":{type:"units",value:4.5},
-   "Bolivia":{type:"units",value:15},
-   "Argentina":{type:"units",value:2000},
-   "Chile":{type:"units",value:1500},
-   "Colombia":{type:"units",value:4500},
-   "Costa Rica":{type:"units",value:650},
-   "Venezuela":{type:"units",value:1500},
-   "Uruguay":{type:"units",value:48},
-   "Rusia":{type:"units",value:103},
-   "Emiratos Árabes":{type:"units",value:4.8},
-   "Angola":{type:"units",value:1850},
-   "Suriname":{type:"units",value:55},
-   "Guyana":{type:"units",value:450}
- };
- let saved={};
- try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
- let currentCalc='remesas';
-
- function allCurrencies(){
-   let names=Object.keys(defaults);
-   try{
-     if(Array.isArray(window.CURRENCIES)) names=[...new Set(window.CURRENCIES.map(x=>x.name||x).concat(names))];
-   }catch(e){}
-   return names;
- }
- function getRules(){
-   const merged={};
-   allCurrencies().forEach(n=>merged[n]=saved[n]||defaults[n]||{type:'percent',value:0});
-   return merged;
- }
- window.openRuleSettings=function(calc){
-   currentCalc=calc||'remesas';
-   const remesaFields=document.getElementById('remesaRuleFields');
-   const divisaFields=document.getElementById('divisaRuleFieldsModal');
-   if(remesaFields) remesaFields.style.display=currentCalc==='remesas'?'block':'none';
-   if(divisaFields) divisaFields.style.display=currentCalc==='divisas'?'block':'none';
-   const sel=document.getElementById('ruleCurrency');
-   const names=currentCalc==='divisas' ? (window.CURRENCIES_DIVISAS||[]).map(x=>x.name) : Object.keys(getRules());
-   sel.innerHTML=names.map(n=>'<option>'+String(n).replace(/</g,'&lt;')+'</option>').join('');
-   let current='';
-   const selects=[...document.querySelectorAll('select')];
-   if(currentCalc==='divisas' && typeof selectedDivisa!=='undefined') current=selectedDivisa;
-   for(const s of selects){
-     const v=s.value;
-     if(v && getRules()[v]){current=v;break;}
-   }
-   if(current) sel.value=current;
-   loadRuleFields();
-   document.getElementById('ruleModal').classList.add('show');
- };
- window.closeRuleSettings=function(){document.getElementById('ruleModal').classList.remove('show')};
- document.getElementById('ruleCurrency').addEventListener('change',loadRuleFields);
- function loadRuleFields(){
-   const n=document.getElementById('ruleCurrency').value;
-   if(currentCalc==='divisas'){
-     const c=(window.CURRENCIES_DIVISAS||[]).find(x=>x.name===n);
-     const r=(typeof getDivisaRule==='function' && c)?getDivisaRule(c):{costo:c?.defaultCosto||0,venta:(c?.defaultCosto||0)+4};
-     document.getElementById('modalRuleCosto').value=r.costo;
-     document.getElementById('modalRuleVenta').value=r.venta;
-   }else{
-     const r=getRules()[n]||{type:'percent',value:0};
-     document.getElementById('ruleType').value=r.type;
-     document.getElementById('ruleValue').value=r.value;
-   }
- }
- window.saveRuleSettings=function(){
-   const n=document.getElementById('ruleCurrency').value;
-   if(currentCalc==='divisas'){
-     const costo=Number(document.getElementById('modalRuleCosto').value);
-     const venta=Number(document.getElementById('modalRuleVenta').value);
-     if(!Number.isFinite(costo)||!Number.isFinite(venta)){ if(typeof window.toast==='function') window.toast('Revisa costo y venta'); return; }
-     const c=(window.CURRENCIES_DIVISAS||[]).find(x=>x.name===n);
-     if(c){ localStorage.setItem('remesas_divisa_rule_'+n,JSON.stringify({costo,venta})); }
-     if(typeof window.render==='function') try{window.render()}catch(e){}
-     document.dispatchEvent(new CustomEvent('rulesChanged',{detail:{currency:n,rule:{costo,venta},calculator:currentCalc}}));
-     if(typeof window.toast==='function') window.toast('Regla guardada para '+n);
-     closeRuleSettings(); return;
-   }
-   saved[n]={type:document.getElementById('ruleType').value,value:Number(document.getElementById('ruleValue').value)};
-   localStorage.setItem(KEY,JSON.stringify(saved));
-   closeRuleSettings();
-   if(typeof window.render==='function') try{window.render()}catch(e){}
-   document.dispatchEvent(new CustomEvent('rulesChanged',{detail:{currency:n,rule:saved[n],calculator:currentCalc}}));
-   if(typeof window.toast==='function') window.toast('Regla guardada para '+n);
- };
- window.resetRuleSettings=function(){
-   const n=document.getElementById('ruleCurrency').value;
-   if(currentCalc==='divisas'){
-     localStorage.removeItem('remesas_divisa_rule_'+n);
-   }else{
-     delete saved[n]; localStorage.setItem(KEY,JSON.stringify(saved));
-   }
-   loadRuleFields();
-   if(typeof window.render==='function') try{window.render()}catch(e){}
-   if(typeof window.toast==='function') window.toast('Regla original restaurada');
- };
- window.getRemeseroRule=function(name){return getRules()[name]||{type:'percent',value:0}};
- window.remeseroRules=getRules();
-
- if(!localStorage.getItem(SEEN)){
-   setTimeout(()=>document.getElementById('firstUpdate').classList.add('show'),500);
- }
- window.closeFirstUpdate=function(){
-   localStorage.setItem(SEEN,'1');
-   document.getElementById('firstUpdate').classList.remove('show');
- };
-})();
-
-// LÓGICA DEL MODO OSCURO
-function toggleDarkMode() {
-  const isDark = document.getElementById("themeToggle").checked;
-  if(isDark) {
-    document.body.classList.add("dark-mode");
-    localStorage.setItem("remesero_theme", "dark");
-  } else {
-    document.body.classList.remove("dark-mode");
-    localStorage.setItem("remesero_theme", "light");
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const savedTheme = localStorage.getItem("remesero_theme");
-  const toggleBtn = document.getElementById("themeToggle");
-  
-  if(savedTheme === "dark") {
-    document.body.classList.add("dark-mode");
-    if(toggleBtn) toggleBtn.checked = true;
-  }
-});
-</script>
-
-<!-- Aviso de primera apertura: edición de reglas -->
-<div id="firstRulesNotice" class="first-rules-notice" aria-hidden="true">
-  <div class="first-rules-card">
-    <div class="first-rules-icon">⚙️</div>
-    <div class="first-rules-title">Nueva opción disponible</div>
-    <div class="first-rules-text">
-      Ahora puedes editar las reglas de cálculo directamente desde
-      <strong>Ajustes ⚙️</strong>.
-    </div>
-    <button id="firstRulesOk" class="first-rules-btn">Entendido</button>
-  </div>
-</div>
-
-<style>
-.first-rules-notice{
-  position:fixed;inset:0;z-index:5000;
-  display:none;align-items:center;justify-content:center;
-  padding:20px;background:rgba(6,18,45,.45);
-  backdrop-filter:blur(5px);
-}
-.first-rules-notice.show{display:flex}
-.first-rules-card{
-  width:min(390px,92vw);background:#fff;border-radius:24px;
-  padding:26px 22px 22px;text-align:center;
-  box-shadow:0 20px 60px rgba(0,0,0,.22);
-  animation:firstRulesIn .25s ease;
-}
-.first-rules-icon{
-  width:58px;height:58px;margin:0 auto 12px;border-radius:18px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:28px;color:#fff;
-  background:linear-gradient(135deg,var(--green2),var(--blue2));
-}
-.first-rules-title{font-size:21px;font-weight:900;color:var(--text);margin-bottom:9px}
-.first-rules-text{font-size:14px;line-height:1.5;color:#52627d;margin-bottom:20px}
-.first-rules-btn{
-  width:100%;border:0;border-radius:13px;padding:13px;
-  color:#fff;background:linear-gradient(100deg,var(--green2),var(--blue2));
-  font-size:15px;font-weight:900;cursor:pointer;
-}
-@keyframes firstRulesIn{
-  from{opacity:0;transform:translateY(12px) scale(.97)}
-  to{opacity:1;transform:translateY(0) scale(1)}
-}
-</style>
-
-<script>
-(function(){
-  const NOTICE_KEY = "remesero_first_rules_notice_v3";
-  const notice = document.getElementById("firstRulesNotice");
-  const ok = document.getElementById("firstRulesOk");
-  if(!notice || !ok) return;
-
-  function closeNotice(){
-    notice.classList.remove("show");
-    notice.setAttribute("aria-hidden","true");
-    localStorage.setItem(NOTICE_KEY,"1");
-  }
-
-  ok.addEventListener("click", closeNotice);
-
-  if(!localStorage.getItem(NOTICE_KEY)){
-    setTimeout(function(){
-      notice.classList.add("show");
-      notice.setAttribute("aria-hidden","false");
-    }, 450);
-  }
-})();
-</script>
-
-</body></html>
+</body>
+</html>
