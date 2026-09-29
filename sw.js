@@ -1,13 +1,40 @@
-const CACHE="remesas-pwa-v2";
-const ASSETS=["./","./index.html","./manifest.json","./icon-192.png","./icon-512.png"];
+const CACHE = "remesas-pwa-v3"; // ⚠️ IMPORTANTE: Cambia este número (v3, v4, v5) cada vez que subas cambios a GitHub
+const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
-self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
+// Instalar e inmediatamente forzar activación (skipWaiting)
+self.addEventListener("install", e => {
+  self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(ASSETS))
+  );
+});
 
-self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
+// Activar, tomar control inmediato de la app (clients.claim) y borrar caches viejas
+self.addEventListener("activate", e => {
+  e.waitUntil(
+    Promise.all([
+      self.clients.claim(),
+      caches.keys().then(keys => 
+        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      )
+    ])
+  );
+});
 
-self.addEventListener("fetch",e=>{
-  if(e.request.method!=="GET") return;
-  e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{
-    const copy=r.clone(); caches.open(CACHE).then(c=>c.put(e.request,copy)); return r;
-  }).catch(()=>cached)));
+// Estrategia Network-First: Busca siempre lo más nuevo en GitHub. Si está offline, carga la versión en caché.
+self.addEventListener("fetch", e => {
+  if (e.request.method !== "GET") return;
+
+  e.respondWith(
+    fetch(e.request)
+      .then(response => {
+        // Actualizar la copia del caché en segundo plano con lo último descargado
+        if (response && response.status === 200) {
+          const copy = response.clone();
+          caches.open(CACHE).then(c => c.put(e.request, copy));
+        }
+        return response;
+      })
+      .catch(() => caches.match(e.request)) // Si falla la red (offline), usa la versión guardada
+  );
 });
