@@ -29,8 +29,8 @@ button,input,select{font:inherit}
 .field-label{font-size:24px;font-weight:400;letter-spacing:-.6px}
 .input-shell{height:50px;border:1px solid var(--line);border-radius:11px;background:var(--glass);box-shadow:0 5px 0 rgba(110,120,120,.13),0 7px 15px var(--shadow);display:flex;align-items:center;padding:0 15px;backdrop-filter:blur(8px)}
 .input-shell input{width:100%;border:0;outline:0;background:transparent;color:var(--text);font-size:25px;font-weight:400}
-.table-wrap{margin-top:22px;position:relative;overflow:visible}
-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:17px}
+.table-wrap{margin:22px auto 0;position:relative;overflow:visible;width:100%;max-width:100%}
+table{width:100%;max-width:100%;margin:0 auto;border-collapse:collapse;table-layout:fixed;font-size:17px}
 th,td{border-bottom:1px solid var(--line);height:43px;text-align:center;padding:4px 7px}
 th{font-weight:400;font-size:21px;border-bottom:2px solid var(--line)}
 th:first-child{width:38%;text-align:left;padding-left:15px}
@@ -67,6 +67,13 @@ td.money{font-size:17px;white-space:nowrap}
 .mode-remesas .chev{font-size:21px}
 .mode-remesas .custom td{height:42px}
 
+/* Botón para cambiar dirección de cálculo en Divisas */
+.calc-switch{display:flex;justify-content:center;margin:8px 0 2px}
+.calc-switch button{min-width:170px;height:42px;padding:0 18px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(135deg,rgba(42,185,123,.18),rgba(69,166,230,.18));color:var(--text);box-shadow:0 4px 0 rgba(110,120,120,.12),0 7px 16px var(--shadow),inset 0 1px rgba(255,255,255,.28);backdrop-filter:blur(10px);font-size:15px;font-weight:700;letter-spacing:.1px;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,background .2s ease}
+.calc-switch button:active{transform:scale(.97);box-shadow:0 2px 0 rgba(110,120,120,.12),0 4px 10px var(--shadow)}
+html[data-theme="dark"] .calc-switch button{background:linear-gradient(135deg,rgba(42,185,123,.20),rgba(69,166,230,.20))}
+@media(max-width:390px){.calc-switch button{height:40px;min-width:160px;font-size:14px}}
+
 /* Divisas mode */
 #divisasView{display:none}.mode-remesas #divisasView{display:none}.mode-divisas #divisasView{display:block}.mode-divisas #remesasView{display:none}
 .mode-divisas .title{font-size:43px}
@@ -92,8 +99,8 @@ td.money{font-size:17px;white-space:nowrap}
       <div class="field-row"><div class="field-label">Precio USDT</div><div class="input-shell"><input id="baseRate" type="number" value="760" step="0.01" inputmode="decimal"></div></div>
       <div class="field-row"><div class="field-label">Margen</div><div class="input-shell"><input id="margin" type="number" value="10" step="0.01" inputmode="decimal"></div></div>
     </div>
-    <div class="table-wrap"><table><thead><tr><th><button class="selector" id="remesaSelector"><span id="remesaName">Zelle</span><span class="chev">⌄</span></button><div class="dropdown" id="remesaMenu"></div></th><th>Cliente</th><th>Ganancia</th></tr></thead><tbody id="remesaRows"></tbody></table></div>
-    <div class="credit">Desarrollado por *Javi&Pau*</div>
+    <div class="table-wrap"><table><thead><tr><th><button class="selector" id="remesaSelector"><span id="remesaName">Zelle</span><span class="chev">⌄</span></button><div class="dropdown" id="remesaMenu"></div></th><th>CUP</th><th>Ganancia</th></tr></thead><tbody id="remesaRows"></tbody></table></div>
+    <div class="credit">Desarrollado por Javi&Pau</div>
   </section>
 
   <section id="divisasView">
@@ -102,7 +109,8 @@ td.money{font-size:17px;white-space:nowrap}
       <div class="field-row"><div class="field-label">Costo %</div><div class="input-shell"><input id="costo" type="number" value="6" step="0.1" inputmode="decimal"></div></div>
       <div class="field-row"><div class="field-label">Venta %</div><div class="input-shell"><input id="venta" type="number" value="7" step="0.1" inputmode="decimal"></div></div>
     </div>
-    <div class="table-wrap"><table><thead><tr><th><button class="selector" id="divisaSelector"><span id="divisaName">Clásica</span><span class="chev">⌄</span></button><div class="dropdown" id="divisaMenu"></div></th><th>Cliente</th><th>Ganancia</th></tr></thead><tbody id="divisaRows"></tbody></table></div>
+    <div class="calc-switch"><button id="divisaDirection" onclick="toggleDivisaDirection()">USD → Divisa</button></div>
+    <div class="table-wrap"><table><thead><tr><th><button class="selector" id="divisaSelector"><span id="divisaName">Clásica</span><span class="chev">⌄</span></button><div class="dropdown" id="divisaMenu"></div></th><th>CUP</th><th>Ganancia</th></tr></thead><tbody id="divisaRows"></tbody></table></div>
     <div class="credit">Desarrollado por Javi&Pau</div>
   </section>
 </div>
@@ -117,7 +125,7 @@ td.money{font-size:17px;white-space:nowrap}
 <script>
 const RANGES=[1,50,100,150,200,250,300];
 const REMESAS=[
- ['Zelle','percent',-7,'−7%'],['IBAN','percent',3,'+3%'],['Sterlinas','percent',10,'+10%'],['México','units',18.5,'18.5 MXN × 1 USDT'],['Brasil','units',5.6,'5.60 BRL × 1 USDT'],['PayPal USD','percent',-10,'−10%'],['Cash App','percent',-10,'−10%'],['Western Union','percent',-10,'−10%'],['PostaPay','percent',0,'1×1'],['PayPal EUR','percent',0,'1×1'],['Bizum','percent',0,'1×1'],['Uruguay','units',48,'48 UYU × 1 USDT'],['Rusia','units',103,'103 RUB × 1 USDT'],['Emiratos Árabes','units',4.8,'4.8 AED × 1 USDT'],['Angola','units',1850,'1850 AOA × 1 USDT'],['Suriname','units',55,'55 SRD × 1 USDT'],['Guyana','units',450,'450 GYD × 1 USDT'],['Venezuela','units',1500,'1500 VES × 1 USDT'],['Canadá','usdt',.53,'0.53 USDT × 1 CAD'],['Ecuador','usdt',.83,'0.83 USDT × 1 USD'],['Costa Rica','units',650,'650 CRC × 1 USDT'],['Argentina','units',2000,'2000 ARS × 1 USDT'],['Chile','units',1500,'1500 CLP × 1 USDT'],['Colombia','units',4500,'4500 COP × 1 USDT'],['Perú','units',4.5,'4.5 PEN × 1 USDT'],['Bolivia','units',15,'15 BOB × 1 USDT']
+ ['Zelle','usdt',.93,'0.93 USDT × 1 USD'],['IBAN','percent',3,'+3%'],['Sterlinas','percent',10,'+10%'],['México','units',18.3,'18.3 MXN × 1 USDT'],['Brasil','units',5.6,'5.60 BRL × 1 USDT'],['PayPal USD','units',885,'885 CUP × 1 USD (transferencia)'],['Cash App','usdt',.90,'0.90 USDT × 1 USD'],['Wester usa','usdt',.88,'0.88 USDT × 1 USD'],['PostaPay','percent',0,'1×1'],['PayPal EUR','percent',0,'1×1'],['Bizum','percent',0,'1×1'],['Uruguay','units',48,'48 UYU × 1 USDT'],['Rusia','units',103,'103 RUB × 1 USDT'],['Emiratos Árabes','units',4.8,'4.8 AED × 1 USDT'],['Angola','units',1850,'1850 KWZ × 1 USDT'],['Suriname','units',55,'55 SRD × 1 USDT'],['Guyana','units',400,'400 GYD × 1 USDT'],['Dominicana','units',85,'85 × 1 USDT'],['Venezuela','units',1500,'1500 × 1 USDT'],['Canadá','usdt',.53,'0.53 USDT × 1 CAD'],['Ecuador','usdt',.83,'0.83 USDT × 1 USD'],['Costa Rica','units',650,'650 CRC × 1 USDT'],['Argentina','units',2000,'2000 ARS × 1 USDT'],['Chile','units',1500,'1500 CLP × 1 USDT'],['Colombia','units',4500,'4500 COP × 1 USDT'],['Perú','units',4.5,'4.5 SOL × 1 USDT'],['Bolivia','units',15,'15 BOB × 1 USDT'],['Nicaragua','usdt',.80,'0.80 USDT × 1 USD'],['$Nio','usdt',.02,'0.02 USDT × 1 NIO']
 ].map(x=>({name:x[0],type:x[1],value:x[2],rule:x[3]}));
 const DIVISAS=[{name:'Clásica',costo:6,venta:7},{name:'Prepago',costo:10,venta:10},{name:'MLC',costo:65,venta:66}];
 let mode=localStorage.getItem('jp_mode')||'divisas', remesa=localStorage.getItem('jp_remesa')||'Zelle', divisa=localStorage.getItem('jp_divisa')||'Clásica';
@@ -132,7 +140,9 @@ function remProfit(q,c){const r=getRule(c);let eq=r.type==='percent'?q*(1+r.valu
 function buildRemMenu(){const m=$('remesaMenu');m.innerHTML=REMESAS.map(c=>`<div class="option ${c.name===remesa?'active':''}" data-name="${c.name}"><span>${c.name}</span><span class="rule">${c.rule}</span></div>`).join('');m.querySelectorAll('.option').forEach(o=>o.onclick=()=>{remesa=o.dataset.name;localStorage.setItem('jp_remesa',remesa);m.classList.remove('show');render()})}
 function buildDivMenu(){const m=$('divisaMenu');m.innerHTML=DIVISAS.map(c=>`<div class="option ${c.name===divisa?'active':''}" data-name="${c.name}"><span>${c.name}</span><span class="rule">Costo ${getDivRule(c).costo}% · Venta ${getDivRule(c).venta}%</span></div>`).join('');m.querySelectorAll('.option').forEach(o=>o.onclick=()=>{divisa=o.dataset.name;const c=DIVISAS.find(x=>x.name===divisa);const r=getDivRule(c);$('costo').value=r.costo;$('venta').value=r.venta;localStorage.setItem('jp_divisa',divisa);m.classList.remove('show');render()})}
 function renderRemesas(){const c=REMESAS.find(x=>x.name===remesa)||REMESAS[0];$('remesaName').textContent=c.name;let html=RANGES.map((q,i)=>`<tr class="${i%3===0?'green':i%3===1?'blue':'red'}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${money(remClient(q,c),0)}</td><td class="money">${money(remProfit(q,c),2)}</td></tr>`).join('');html+=`<tr class="custom"><td class="custom-label"><input id="customRem" type="number" min="0" step=".01" placeholder="Cant. USD"></td><td id="customRemClient">—</td><td id="customRemProfit">—</td></tr>`;$('remesaRows').innerHTML=html;const inp=$('customRem');inp.oninput=()=>{const q=Number(inp.value);$('customRemClient').textContent=q>0?money(remClient(q,c),0):'—';$('customRemProfit').textContent=q>0?money(remProfit(q,c),2):'—'}}
-function renderDivisas(){const c=DIVISAS.find(x=>x.name===divisa)||DIVISAS[0],r=getDivRule(c);$('divisaName').textContent=c.name;$('costo').value=r.costo;$('venta').value=r.venta;let html=RANGES.slice(3).map((q,i)=>{const costo=Number(r.costo)||0,venta=Number(r.venta)||0;const cliente=q*(1+venta/100);const gan=q*(venta-costo)/100;const cls=i%3===0?'green':i%3===1?'blue':'red';return `<tr class="${cls}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${money(cliente,2)}</td><td class="money">${money(gan,2)}</td></tr>`}).join('');html+=`<tr class="custom"><td class="custom-label"><input id="customDiv" type="number" min="0" step=".01" inputmode="decimal" placeholder="Cant. USD"></td><td id="customDivClient">—</td><td id="customDivProfit">—</td></tr>`;$('divisaRows').innerHTML=html;const inp=$('customDiv');inp.oninput=()=>{const q=Number(inp.value),costo=Number(r.costo)||0,venta=Number(r.venta)||0;if(q>0){$('customDivClient').textContent=money(q*(1+venta/100),2);$('customDivProfit').textContent=money(q*(venta-costo)/100,2)}else{$('customDivClient').textContent='—';$('customDivProfit').textContent='—'}}}
+function renderDivisas(){const c=DIVISAS.find(x=>x.name===divisa)||DIVISAS[0],r=getDivRule(c);$('divisaName').textContent=c.name;$('costo').value=r.costo;$('venta').value=r.venta;const costo=Number(r.costo)||0,venta=Number(r.venta)||0;let html=RANGES.slice(3).map((q,i)=>{const cls=i%3===0?'green':i%3===1?'blue':'red';if(divisaDirection==='reverse'){const div=q*(1+venta/100);const usd=q;const gan=q*(venta-costo)/100;return `<tr class="${cls}"><td class="name">${div.toLocaleString('en-US',{maximumFractionDigits:2})}</td><td class="money">${money(usd,2)}</td><td class="money">${money(gan,2)}</td></tr>`}const cliente=q*(1+venta/100);const gan=q*(venta-costo)/100;return `<tr class="${cls}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${money(cliente,2)}</td><td class="money">${money(gan,2)}</td></tr>`}).join('');html+=`<tr class="custom"><td class="custom-label"><input id="customDiv" type="number" min="0" step=".01" inputmode="decimal" placeholder="${divisaDirection==='reverse'?c.name:'Cant. USD'}"></td><td id="customDivClient">—</td><td id="customDivProfit">—</td></tr>`;$('divisaRows').innerHTML=html;$('divisaDirection').textContent=divisaDirection==='reverse'?`${c.name} → USD`:'USD → '+c.name;const inp=$('customDiv');inp.oninput=()=>{const q=Number(inp.value);if(q>0){if(divisaDirection==='reverse'){const usd=q/(1+venta/100);$('customDivClient').textContent=money(usd,2);$('customDivProfit').textContent=money(usd*(venta-costo)/100,2)}else{$('customDivClient').textContent=money(q*(1+venta/100),2);$('customDivProfit').textContent=money(q*(venta-costo)/100,2)}}else{$('customDivClient').textContent='—';$('customDivProfit').textContent='—'}}}
+let divisaDirection=localStorage.getItem('jp_divisa_direction')||'normal';
+function toggleDivisaDirection(){divisaDirection=divisaDirection==='normal'?'reverse':'normal';localStorage.setItem('jp_divisa_direction',divisaDirection);renderDivisas()}
 function render(){app.classList.toggle('mode-divisas',mode==='divisas');app.classList.toggle('mode-remesas',mode==='remesas');$('navDivisas').classList.toggle('active',mode==='divisas');$('navRemesas').classList.toggle('active',mode==='remesas');buildRemMenu();buildDivMenu();renderRemesas();renderDivisas()}
 function switchMode(m){mode=m;localStorage.setItem('jp_mode',m);render()}
 $('remesaSelector').onclick=e=>{e.stopPropagation();$('remesaMenu').classList.toggle('show');$('divisaMenu').classList.remove('show')};$('divisaSelector').onclick=e=>{e.stopPropagation();$('divisaMenu').classList.toggle('show');$('remesaMenu').classList.remove('show')};document.onclick=()=>{$('remesaMenu').classList.remove('show');$('divisaMenu').classList.remove('show')};
