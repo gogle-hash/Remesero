@@ -125,7 +125,7 @@ html[data-theme="dark"] .calc-switch button{background:linear-gradient(135deg,rg
       <div class="field-row"><div class="field-label">Venta %</div><div class="input-shell"><input id="venta" type="number" value="7" step="0.1" inputmode="decimal"></div></div>
     </div>
     <div class="calc-switch"><button id="divisaDirection" onclick="toggleDivisaDirection()">USD → Divisa</button></div>
-    <div class="table-wrap"><table><thead><tr><th><button class="selector" id="divisaSelector"><span id="divisaName">Clásica</span><span class="chev">⌄</span></button><div class="dropdown" id="divisaMenu"></div></th><th>CUP</th><th>Ganancia</th></tr></thead><tbody id="divisaRows"></tbody></table></div>
+    <div class="table-wrap"><table><thead><tr><th><button class="selector" id="divisaSelector"><span id="divisaName">Clásica</span><span class="chev">⌄</span></button><div class="dropdown" id="divisaMenu"></div></th><th>USD</th><th>Ganancia</th></tr></thead><tbody id="divisaRows"></tbody></table></div>
     <div class="credit">Desarrollado por Javi&Pau</div>
   </section>
 </div>
@@ -154,7 +154,7 @@ function ruleText(c){const r=getRule(c);if(r.type===c.type&&Number(r.value)===Nu
 function getDivRule(c){try{const x=localStorage.getItem('jp_divrule_'+c.name);if(x)return JSON.parse(x)}catch(e){}return {costo:c.costo,venta:c.venta}}
 function money(n,d=2){return Number.isFinite(n)?'$'+n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'—'}
 function saleUSDT(){return Math.max(0,(Number($('baseRate').value)||0)-(Number($('margin').value)||0))}
-function remRate(c){const r=getRule(c),s=saleUSDT();if(r.type==='percent')return s*(1+r.value/100);if(r.type==='units')return r.value?s/r.value:0;return s*r.value}
+function remRate(c){const r=getRule(c),s=saleUSDT();if(r.type==='percent') return s*(1+r.value/100);if(r.type==='units')return r.value?s/r.value:0;return s*r.value}
 function remClient(q,c){return q*remRate(c)}
 function remProfit(q,c){const r=getRule(c);let eq=r.type==='percent'?q*(1+r.value/100):r.type==='units'?(r.value?q/r.value:0):q*r.value;return eq*(Number($('margin').value)||0)}
 function buildRemMenu(){const m=$('remesaMenu');m.innerHTML=REMESAS.map(c=>`<div class="option ${c.name===remesa?'active':''}" data-name="${c.name}"><span>${c.name}</span><span class="rule">${ruleText(c)}</span></div>`).join('');m.querySelectorAll('.option').forEach(o=>o.onclick=()=>{remesa=o.dataset.name;localStorage.setItem('jp_remesa',remesa);m.classList.remove('show');render()})}
