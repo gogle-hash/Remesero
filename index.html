@@ -90,6 +90,18 @@ html[data-theme="dark"] .calc-switch button{background:linear-gradient(135deg,rg
 .toast{position:fixed;z-index:900;left:50%;bottom:120px;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:var(--text);color:var(--bg);padding:10px 15px;border-radius:12px;font-size:13px;transition:.22s}.toast.show{opacity:1;transform:translate(-50%,0)}
 .notice{position:fixed;inset:0;z-index:800;background:rgba(5,12,18,.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}.notice.show{display:flex}.notice-card{width:min(380px,100%);background:var(--panel);border:1px solid var(--line);border-radius:25px;padding:24px;text-align:center;box-shadow:0 25px 70px rgba(0,0,0,.35)}.notice-icon{width:62px;height:62px;border-radius:19px;margin:0 auto 13px;display:grid;place-items:center;font-size:30px;background:var(--text);color:var(--bg)}.notice h2{margin:0 0 8px;font-size:21px}.notice p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}.notice button{width:100%;height:46px;border:0;border-radius:13px;background:var(--text);color:var(--bg);font-weight:800;margin-top:18px}
 @media(max-width:390px){.app{padding-left:13px;padding-right:13px}.title,.mode-divisas .title{font-size:38px}.gear{width:62px;height:62px;flex-basis:62px;font-size:30px}.field-row{grid-template-columns:1fr 190px;gap:10px}.field-label{font-size:23px}th{font-size:22px}td.name{font-size:20px}td.money{font-size:19px}.bottom{height:84px}.credit{margin-top:38px}}
+/* === Botón cambio de cálculo USD ⇄ Divisa (agregado) === */
+.dir-btn{width:100%;min-width:0;justify-content:space-between;gap:6px;padding:0 12px;color:var(--text);font-size:16px;font-weight:400;letter-spacing:0;white-space:nowrap;text-align:left;cursor:pointer;transition:transform .15s}
+.dir-btn:active{transform:scale(.98)}
+.dir-btn #dirTitle{overflow:hidden;text-overflow:ellipsis}
+.dir-ico{flex:0 0 auto;font-size:19px;line-height:1;color:var(--muted);transition:transform .35s ease}
+.dir-btn.rev .dir-ico{transform:rotate(180deg)}
+@media(max-width:360px){.dir-btn{font-size:14px;padding:0 10px}.dir-ico{font-size:17px}}
+/* === Burbuja "Ganancia" igual a las otras del encabezado en Divisas (agregado) === */
+.mode-divisas th:first-child,.mode-divisas th:nth-child(2),.mode-divisas th:nth-child(3){width:33.333%;padding:4px;text-align:center}
+.mode-divisas th .selector{height:47px;padding:0 8px;gap:3px;font-size:clamp(12px,4.1vw,18px);white-space:nowrap}
+.mode-divisas th .chev{font-size:17px;transform:none}
+.selector.static{justify-content:center;cursor:default;pointer-events:none}
 /* === Aviso de nueva actualización (agregado) === */
 .update-notice{position:fixed;inset:0;z-index:1000;background:rgba(5,12,18,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px}
 .update-notice.show{display:flex;animation:updFade .25s ease}
@@ -120,6 +132,7 @@ html[data-theme="dark"] .calc-switch button{background:linear-gradient(135deg,rg
     <header class="header"><h1 class="title">Calculadora<br>Divisas</h1><button class="gear" onclick="openSettings()">⚙</button></header>
     <div class="section">
       <div id="usdDivisaFields">
+        <div class="field-row"><div class="field-label">Cálculo</div><button class="input-shell dir-btn" id="dirBtn" onclick="toggleDivisaDirection()"><span id="dirTitle">USD → Divisa</span><span class="dir-ico">⇄</span></button></div>
         <div class="field-row"><div class="field-label">Costo %</div><div class="input-shell"><input id="costo" type="number" value="6" step="0.1" inputmode="decimal"></div></div>
         <div class="field-row"><div class="field-label">Venta %</div><div class="input-shell"><input id="venta" type="number" value="7" step="0.1" inputmode="decimal"></div></div>
       </div>
@@ -128,7 +141,7 @@ html[data-theme="dark"] .calc-switch button{background:linear-gradient(135deg,rg
         <div class="field-row"><div class="field-label">Margen</div><div class="input-shell"><input id="divisaUsdtMargin" type="number" value="10" step="0.01" inputmode="decimal"></div></div>
       </div>
     </div>
-    <div class="table-wrap"><table><thead><tr><th><button class="selector" id="divisaSelector"><span id="divisaName">Clásica</span><span class="chev">⌄</span></button><div class="dropdown" id="divisaMenu"></div></th><th><button class="selector" id="divisaCurrencySelector" onclick="event.stopPropagation();toggleDivisaCurrency()"><span id="divisaCurrencyName">USD</span><span class="chev">⌄</span></button><div class="dropdown" id="divisaCurrencyMenu"><div class="option active" data-currency="USD"><span>USD</span><span class="rule">Dólares</span></div><div class="option" data-currency="CUP"><span>CUP</span><span class="rule">Pesos cubanos</span></div></div></th><th>Ganancia</th></tr></thead><tbody id="divisaRows"></tbody></table></div>
+    <div class="table-wrap"><table><thead><tr><th><button class="selector" id="divisaSelector"><span id="divisaName">Clásica</span><span class="chev">⌄</span></button><div class="dropdown" id="divisaMenu"></div></th><th><button class="selector" id="divisaCurrencySelector" onclick="event.stopPropagation();toggleDivisaCurrency()"><span id="divisaCurrencyName">USD</span><span class="chev">⌄</span></button><div class="dropdown" id="divisaCurrencyMenu"><div class="option active" data-currency="USD"><span>USD</span><span class="rule">Dólares</span></div><div class="option" data-currency="CUP"><span>CUP</span><span class="rule">Pesos cubanos</span></div></div></th><th><div class="selector static"><span>Ganancia</span></div></th></tr></thead><tbody id="divisaRows"></tbody></table></div>
     <div class="credit">Desarrollado por Javi&Pau</div>
   </section>
 </div>
@@ -170,17 +183,21 @@ function renderDivisas(){
     $('costo').value=r.costo;
     $('venta').value=r.venta;
     const costo=Number(r.costo)||0,venta=Number(r.venta)||0;
+    const rev=divisaDirection==='reverse';
+    const calc=q=>rev?Math.max(0,q*(1-venta/100)):q*(1+venta/100);
+    $('dirBtn').classList.toggle('rev',rev);
+    $('dirTitle').textContent=rev?'Divisa → USD':'USD → Divisa';
     let html=RANGES.slice(3).map((q,i)=>{
       const cls=i%3===0?'green':i%3===1?'blue':'red';
-      const cliente=q*(1+venta/100),gan=q*(venta-costo)/100;
+      const cliente=calc(q),gan=q*(venta-costo)/100;
       return `<tr class="${cls}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${money(cliente,2)}</td><td class="money">${money(gan,2)}</td></tr>`
     }).join('');
-    html+=`<tr class="custom"><td class="custom-label"><input id="customDiv" type="number" min="0" step=".01" inputmode="decimal" placeholder="Cant. USD"></td><td id="customDivClient">—</td><td id="customDivProfit">—</td></tr>`;
+    html+=`<tr class="custom"><td class="custom-label"><input id="customDiv" type="number" min="0" step=".01" inputmode="decimal" placeholder="${rev?'Cant. divisa':'Cant. USD'}"></td><td id="customDivClient">—</td><td id="customDivProfit">—</td></tr>`;
     $('divisaRows').innerHTML=html;
     const inp=$('customDiv');
     inp.oninput=()=>{
       const q=Number(inp.value);
-      $('customDivClient').textContent=q>0?money(q*(1+venta/100),2):'—';
+      $('customDivClient').textContent=q>0?money(calc(q),2):'—';
       $('customDivProfit').textContent=q>0?money(q*(venta-costo)/100,2):'—';
     };
   }else{
@@ -206,9 +223,13 @@ function renderDivisas(){
   }
   $('divisaCurrencyMenu').querySelectorAll('.option').forEach(o=>o.classList.toggle('active',o.dataset.currency===divisaCurrency));
 }
-let divisaDirection='normal';
+let divisaDirection=localStorage.getItem('jp_divisa_direction')==='reverse'?'reverse':'normal';
 let divisaCurrency=localStorage.getItem('jp_divisa_currency')||'USD';
-function toggleDivisaDirection(){}
+function toggleDivisaDirection(){
+  divisaDirection=divisaDirection==='reverse'?'normal':'reverse';
+  localStorage.setItem('jp_divisa_direction',divisaDirection);
+  renderDivisas();
+}
 function toggleDivisaCurrency(){
   $('divisaCurrencyMenu').classList.toggle('show');
 }
