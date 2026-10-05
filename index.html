@@ -22,8 +22,10 @@ button,input,select{font:inherit}
 .app{width:min(520px,100%);min-height:100vh;margin:auto;padding:26px 18px 118px;position:relative;overflow:hidden}
 .header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:6px 2px 22px}
 .title{font-size:43px;line-height:1.04;font-weight:300;letter-spacing:-2px;margin:0;max-width:285px}
-.gear{width:68px;height:68px;flex:0 0 68px;border:0;border-radius:50%;display:grid;place-items:center;position:relative;cursor:pointer;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.9),rgba(177,188,190,.42) 47%,rgba(120,133,137,.26) 100%);box-shadow:inset 0 2px 8px rgba(255,255,255,.8),0 10px 22px var(--shadow);backdrop-filter:blur(8px);color:var(--muted);font-size:33px;text-shadow:0 2px 2px rgba(255,255,255,.75)}
+.gear{width:48px;height:48px;flex:0 0 48px;border:0;border-radius:0;display:grid;place-items:center;position:relative;cursor:pointer;background:transparent;box-shadow:none;backdrop-filter:none;color:var(--muted);font-size:30px;text-shadow:none}
 .gear:active{transform:scale(.96)}
+.rate-card{margin:8px auto 12px;max-width:420px;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:var(--glass);box-shadow:0 4px 14px var(--shadow);text-align:center;font-weight:800;font-size:15px;line-height:1.25}
+.rate-card small{display:block;margin-bottom:3px;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
 .section{margin-bottom:18px}
 .field-row{display:grid;grid-template-columns:1fr 255px;align-items:center;gap:18px;margin:10px 0}
 .field-label{font-size:24px;font-weight:400;letter-spacing:-.6px}
@@ -89,7 +91,7 @@ html[data-theme="dark"] .calc-switch button{background:linear-gradient(135deg,rg
 .settings-label{font-size:12px;font-weight:800;color:var(--muted);display:block;margin:13px 0 6px}.settings-input,.settings-select{width:100%;height:46px;border:1px solid var(--line);border-radius:12px;background:var(--input);color:var(--text);padding:0 12px;outline:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.save{width:100%;height:48px;border:0;border-radius:13px;background:var(--text);color:var(--bg);font-weight:800;margin-top:16px}.reset{width:100%;height:43px;border:0;border-radius:13px;background:rgba(120,130,140,.12);color:var(--text);font-weight:700;margin-top:8px}.theme-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.theme-btn{height:42px;border:1px solid var(--line);border-radius:11px;background:var(--input);color:var(--text);font-size:12px}.theme-btn.active{outline:2px solid var(--text)}
 .toast{position:fixed;z-index:900;left:50%;bottom:120px;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:var(--text);color:var(--bg);padding:10px 15px;border-radius:12px;font-size:13px;transition:.22s}.toast.show{opacity:1;transform:translate(-50%,0)}
 .notice{position:fixed;inset:0;z-index:800;background:rgba(5,12,18,.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}.notice.show{display:flex}.notice-card{width:min(380px,100%);background:var(--panel);border:1px solid var(--line);border-radius:25px;padding:24px;text-align:center;box-shadow:0 25px 70px rgba(0,0,0,.35)}.notice-icon{width:62px;height:62px;border-radius:19px;margin:0 auto 13px;display:grid;place-items:center;font-size:30px;background:var(--text);color:var(--bg)}.notice h2{margin:0 0 8px;font-size:21px}.notice p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}.notice button{width:100%;height:46px;border:0;border-radius:13px;background:var(--text);color:var(--bg);font-weight:800;margin-top:18px}
-@media(max-width:390px){.app{padding-left:13px;padding-right:13px}.title,.mode-divisas .title{font-size:38px}.gear{width:62px;height:62px;flex-basis:62px;font-size:30px}.field-row{grid-template-columns:1fr 190px;gap:10px}.field-label{font-size:23px}th{font-size:22px}td.name{font-size:20px}td.money{font-size:19px}.bottom{height:84px}.credit{margin-top:38px}}
+@media(max-width:390px){.app{padding-left:13px;padding-right:13px}.title,.mode-divisas .title{font-size:38px}.gear{width:48px;height:48px;flex-basis:48px;font-size:29px}.field-row{grid-template-columns:1fr 190px;gap:10px}.field-label{font-size:23px}th{font-size:22px}td.name{font-size:20px}td.money{font-size:19px}.bottom{height:84px}.credit{margin-top:38px}}
 /* === Botón cambio de cálculo USD ⇄ Divisa (agregado) === */
 .dir-btn{width:100%;min-width:0;justify-content:space-between;gap:6px;padding:0 12px;color:var(--text);font-size:16px;font-weight:400;letter-spacing:0;white-space:nowrap;text-align:left;cursor:pointer;transition:transform .15s}
 .dir-btn:active{transform:scale(.98)}
@@ -121,7 +123,7 @@ html[data-theme="dark"] .calc-switch button{background:linear-gradient(135deg,rg
   <section id="remesasView">
     <header class="header"><h1 class="title">Calculadora<br>Remesas</h1><button class="gear" onclick="openSettings()">⚙</button></header>
     <div class="section">
-      <div class="field-row"><div class="field-label">Precio USDT</div><div class="input-shell"><input id="baseRate" type="number" value="760" step="0.01" inputmode="decimal"></div></div>
+      <div class="field-row"><div class="field-label">Precio USDT</div><div class="input-shell"><input id="baseRate" type="number" value="820" step="0.01" inputmode="decimal"></div></div>
       <div class="field-row"><div class="field-label">Margen</div><div class="input-shell"><input id="margin" type="number" value="10" step="0.01" inputmode="decimal"></div></div>
     </div>
     <div class="table-wrap"><table><thead><tr><th><button class="selector" id="remesaSelector"><span id="remesaName">Zelle</span><span class="chev">⌄</span></button><div class="dropdown" id="remesaMenu"></div></th><th>CUP</th><th>Ganancia</th></tr></thead><tbody id="remesaRows"></tbody></table></div>
@@ -148,7 +150,7 @@ html[data-theme="dark"] .calc-switch button{background:linear-gradient(135deg,rg
 
 <nav class="bottom"><button class="nav" id="navRemesas" onclick="switchMode('remesas')"><span class="nav-icon">💵</span><span>Remesas</span></button><button class="nav active" id="navDivisas" onclick="switchMode('divisas')"><span class="nav-icon">🪙</span><span>Divisas</span></button></nav>
 
-<div class="overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()"><div class="sheet"><div class="sheet-head"><h2>⚙️ Ajustes</h2><button class="close" onclick="closeSettings()">×</button></div><div id="remesaSettings"><label class="settings-label">Método / divisa</label><select class="settings-select" id="ruleCurrency"></select><div class="grid"><div><label class="settings-label">Tipo</label><select class="settings-select" id="ruleType"><option value="percent">Porcentaje</option><option value="units">Unidades por 1 USDT</option><option value="usdt">Valor USDT</option></select></div><div><label class="settings-label">Valor</label><input class="settings-input" id="ruleValue" type="number" step="0.01"></div></div></div><div id="divisaSettings" style="display:none"><label class="settings-label">Divisa</label><select class="settings-select" id="divisaRuleCurrency"></select><div class="grid"><div><label class="settings-label">Costo %</label><input class="settings-input" id="ruleCosto" type="number" step="0.1"></div><div><label class="settings-label">Venta %</label><input class="settings-input" id="ruleVenta" type="number" step="0.1"></div></div><div id="cupRuleSettings" style="display:none"><div class="grid"><div><label class="settings-label">Precio USDT (CUP)</label><input class="settings-input" id="ruleCupUsdt" type="number" step="0.01"></div><div><label class="settings-label">Margen (CUP)</label><input class="settings-input" id="ruleCupMargin" type="number" step="0.01"></div></div></div></div><label class="settings-label">Tema</label><div class="theme-buttons"><button class="theme-btn" data-theme="light">Claro</button><button class="theme-btn" data-theme="dark">Oscuro</button><button class="theme-btn" data-theme="system">Sistema</button></div><button class="save" onclick="saveSettings()">Guardar cambios</button><button class="reset" onclick="resetCurrentRule()">Restaurar regla original</button></div></div>
+<div class="overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()"><div class="sheet"><div class="sheet-head"><h2>⚙️ Ajustes</h2><button class="close" onclick="closeSettings()">×</button></div><div id="remesaSettings"><label class="settings-label">Método / divisa</label><select class="settings-select" id="ruleCurrency"></select><div class="grid"><div><label class="settings-label">Tipo</label><select class="settings-select" id="ruleType"><option value="percent">Porcentaje</option><option value="units">Unidades por 1 USDT</option><option value="usdt">Valor USDT</option></select></div><div><label class="settings-label">Valor</label><input class="settings-input" id="ruleValue" type="number" step="0.01"></div></div></div><div id="divisaSettings" style="display:none"><label class="settings-label">Divisa</label><select class="settings-select" id="divisaRuleCurrency"></select><div class="grid" id="usdRuleSettings"><div><label class="settings-label">Descuento USDT %</label><input class="settings-input" id="ruleCosto" type="number" step="0.1"></div><div><label class="settings-label">Venta %</label><input class="settings-input" id="ruleVenta" type="number" step="0.1"></div></div><div id="cupRuleSettings" style="display:none"><label class="settings-label">Descuento % al USDT</label><input class="settings-input" id="ruleCupCosto" type="number" step="0.1"><div class="grid"><div><label class="settings-label">Precio USDT (CUP)</label><input class="settings-input" id="ruleCupUsdt" type="number" step="0.01"></div><div><label class="settings-label">Margen (CUP)</label><input class="settings-input" id="ruleCupMargin" type="number" step="0.01"></div></div></div></div><label class="settings-label">Tema</label><div class="theme-buttons"><button class="theme-btn" data-theme="light">Claro</button><button class="theme-btn" data-theme="dark">Oscuro</button><button class="theme-btn" data-theme="system">Sistema</button></div><button class="save" onclick="saveSettings()">Guardar cambios</button><button class="reset" onclick="resetCurrentRule()">Restaurar regla original</button></div></div>
 
 <div class="notice" id="notice"><div class="notice-card"><div class="notice-icon">⚙</div><h2>Nueva opción disponible</h2><p>Ahora puedes editar las reglas de cálculo directamente desde <b>Ajustes ⚙️</b>.</p><button onclick="closeNotice()">Entendido</button></div></div>
 <div class="toast" id="toast"></div>
@@ -158,9 +160,9 @@ html[data-theme="dark"] .calc-switch button{background:linear-gradient(135deg,rg
 <script>
 const RANGES=[1,50,100,150,200,250,300];
 const REMESAS=[
- ['Zelle','usdt',.93,'0.93 USDT × 1 USD'],['IBAN','percent',3,'+3%'],['Sterlinas','percent',10,'+10%'],['México','units',18.3,'18.3 MXN × 1 USDT'],['Brasil','units',5.6,'5.60 BRL × 1 USDT'],['PayPal USD','units',885,'885 CUP × 1 USD (transferencia)'],['Cash App','usdt',.90,'0.90 USDT × 1 USD'],['Wester usa','usdt',.88,'0.88 USDT × 1 USD'],['PostaPay','percent',0,'1×1'],['PayPal EUR','percent',0,'1×1'],['Bizum','percent',0,'1×1'],['Uruguay','units',48,'48 UYU × 1 USDT'],['Rusia','units',103,'103 RUB × 1 USDT'],['Emiratos Árabes','units',4.8,'4.8 AED × 1 USDT'],['Angola','units',1850,'1850 KWZ × 1 USDT'],['Suriname','units',55,'55 SRD × 1 USDT'],['Guyana','units',400,'400 GYD × 1 USDT'],['Dominicana','units',85,'85 × 1 USDT'],['Venezuela','units',1500,'1500 × 1 USDT'],['Canadá','usdt',.53,'0.53 USDT × 1 CAD'],['Ecuador','usdt',.83,'0.83 USDT × 1 USD'],['Costa Rica','units',650,'650 CRC × 1 USDT'],['Argentina','units',2000,'2000 ARS × 1 USDT'],['Chile','units',1500,'1500 CLP × 1 USDT'],['Colombia','units',4500,'4500 COP × 1 USDT'],['Perú','units',4.5,'4.5 SOL × 1 USDT'],['Bolivia','units',15,'15 BOB × 1 USDT'],['Nicaragua','usdt',.80,'0.80 USDT × 1 USD'],['$Nio','usdt',.02,'0.02 USDT × 1 NIO']
+ ['Zelle','usdt',.93,'0.93 USDT × 1 USD'],['IBAN','percent',3,'+3%'],['Sterlinas','percent',10,'+10%'],['México','units',18.3,'18.3 MXN × 1 USDT'],['Brasil','units',5.6,'5.60 BRL × 1 USDT'],['PayPal USD','units',885,'885 CUP × 1 USD (transferencia)'],['Cash App','usdt',.90,'0.90 USDT × 1 USD'],['Wester usa','usdt',.88,'0.88 USDT × 1 USD'],['PostePay','percent',0,'1×1'],['PayPal EUR','percent',0,'1×1'],['Bizum','percent',0,'1×1'],['Uruguay','units',48,'48 UYU × 1 USDT'],['Rusia','units',103,'103 RUB × 1 USDT'],['Emiratos Árabes','units',4.8,'4.8 AED × 1 USDT'],['Angola','units',1850,'1850 KWZ × 1 USDT'],['Suriname','units',55,'55 SRD × 1 USDT'],['Guyana','units',400,'400 GYD × 1 USDT'],['Dominicana','units',85,'85 × 1 USDT'],['Venezuela','units',1500,'1500 × 1 USDT'],['Canadá','usdt',.53,'0.53 USDT × 1 CAD'],['Ecuador','usdt',.83,'0.83 USDT × 1 USD'],['Costa Rica','units',650,'650 CRC × 1 USDT'],['Argentina','units',2000,'2000 ARS × 1 USDT'],['Chile','units',1500,'1500 CLP × 1 USDT'],['Colombia','units',4500,'4500 COP × 1 USDT'],['Perú','units',4.5,'4.5 SOL × 1 USDT'],['Bolivia','units',15,'15 BOB × 1 USDT'],['Nicaragua','usdt',.80,'0.80 USDT × 1 USD'],['$Nio','usdt',.02,'0.02 USDT × 1 NIO']
 ].map(x=>({name:x[0],type:x[1],value:x[2],rule:x[3]}));
-const DIVISAS=[{name:'Clásica',costo:6,venta:7},{name:'Prepago',costo:10,venta:10},{name:'MLC',costo:65,venta:66}];
+const DIVISAS=[{name:'Clásica',costo:6,venta:7},{name:'Prepago',costo:15,venta:15},{name:'MLC',costo:65,venta:66}];
 let mode=localStorage.getItem('jp_mode')||'divisas', remesa=localStorage.getItem('jp_remesa')||'Zelle', divisa=localStorage.getItem('jp_divisa')||'Clásica';
 const $=id=>document.getElementById(id); const app=$('app');
 function getRule(c){try{const x=localStorage.getItem('jp_rule_'+c.name);if(x)return JSON.parse(x)}catch(e){}return {type:c.type,value:c.value}}
@@ -172,7 +174,34 @@ function remClient(q,c){return q*remRate(c)}
 function remProfit(q,c){const r=getRule(c);let eq=r.type==='percent'?q*(1+r.value/100):r.type==='units'?(r.value?q/r.value:0):q*r.value;return eq*(Number($('margin').value)||0)}
 function buildRemMenu(){const m=$('remesaMenu');m.innerHTML=REMESAS.map(c=>`<div class="option ${c.name===remesa?'active':''}" data-name="${c.name}"><span>${c.name}</span><span class="rule">${c.rule}</span></div>`).join('');m.querySelectorAll('.option').forEach(o=>o.onclick=()=>{remesa=o.dataset.name;localStorage.setItem('jp_remesa',remesa);m.classList.remove('show');render()})}
 function buildDivMenu(){const m=$('divisaMenu');m.innerHTML=DIVISAS.map(c=>`<div class="option ${c.name===divisa?'active':''}" data-name="${c.name}"><span>${c.name}</span><span class="rule">Costo ${getDivRule(c).costo}% · Venta ${getDivRule(c).venta}%</span></div>`).join('');m.querySelectorAll('.option').forEach(o=>o.onclick=()=>{divisa=o.dataset.name;const c=DIVISAS.find(x=>x.name===divisa);const r=getDivRule(c);$('costo').value=r.costo;$('venta').value=r.venta;localStorage.setItem('jp_divisa',divisa);m.classList.remove('show');render()})}
-function renderRemesas(){const c=REMESAS.find(x=>x.name===remesa)||REMESAS[0];$('remesaName').textContent=c.name;let html=RANGES.map((q,i)=>`<tr class="${i%3===0?'green':i%3===1?'blue':'red'}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${money(remClient(q,c),0)}</td><td class="money">${money(remProfit(q,c),2)}</td></tr>`).join('');html+=`<tr class="custom"><td class="custom-label"><input id="customRem" type="number" min="0" step=".01" placeholder="Cant. USD"></td><td id="customRemClient">—</td><td id="customRemProfit">—</td></tr>`;$('remesaRows').innerHTML=html;const inp=$('customRem');inp.oninput=()=>{const q=Number(inp.value);$('customRemClient').textContent=q>0?money(remClient(q,c),0):'—';$('customRemProfit').textContent=q>0?money(remProfit(q,c),2):'—'}}
+function renderRemesas(){const c=REMESAS.find(x=>x.name===remesa)||REMESAS[0];$('remesaName').textContent=c.name;$('baseRate').value=localStorage.getItem('jp_base_rate')||$('baseRate').value;$('margin').value=localStorage.getItem('jp_margin')||$('margin').value;let html=RANGES.map((q,i)=>`<tr class="${i%3===0?'green':i%3===1?'blue':'red'}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${money(remClient(q,c),0)}</td><td class="money">${money(remProfit(q,c),2)}</td></tr>`).join('');html+=`<tr class="custom"><td class="custom-label"><input id="customRem" type="number" min="0" step=".01" placeholder="Cant. USD"></td><td id="customRemClient">—</td><td id="customRemProfit">—</td></tr>`;$('remesaRows').innerHTML=html;const inp=$('customRem');inp.oninput=()=>{const q=Number(inp.value);$('customRemClient').textContent=q>0?money(remClient(q,c),0):'—';$('customRemProfit').textContent=q>0?money(remProfit(q,c),2):'—'}}
+function updateCupDisplay(){
+  if(divisaCurrency!=='CUP') return;
+  const c=DIVISAS.find(x=>x.name===divisa)||DIVISAS[0];
+  const r=getDivRule(c);
+  const baseUSDT=Math.max(0,Number($('divisaUsdtPrice').value)||0);
+  const margin=Math.max(0,Number($('divisaUsdtMargin').value)||0);
+  const costo=Math.max(0,Number(r.costo)||0);
+  const usdtConMargen=Math.max(0,baseUSDT-margin);
+  const usdtFinal=Math.max(0,usdtConMargen*(1-costo/100));
+  const porcentajeGanancia=Math.max(0,usdtConMargen-usdtFinal);
+  let html=`<tr class="green"><td class="name">1</td><td class="money">${usdtFinal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="money">${porcentajeGanancia.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td></tr>`;
+  html+=RANGES.slice(3).map((q,i)=>{
+    const cls=i%3===0?'green':i%3===1?'blue':'red';
+    const cliente=q*usdtFinal;
+    const gan=q*porcentajeGanancia;
+    return `<tr class="${cls}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${cliente.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="money">${gan.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td></tr>`;
+  }).join('');
+  html+=`<tr class="custom"><td class="custom-label"><input id="customDiv" type="number" min="0" step=".01" inputmode="decimal" placeholder="Cant. USD"></td><td id="customDivClient">—</td><td id="customDivProfit">—</td></tr>`;
+  $('divisaRows').innerHTML=html;
+  const inp=$('customDiv');
+  inp.oninput=()=>{
+    const q=Number(inp.value);
+    $('customDivClient').textContent=q>0?(q*usdtFinal).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+    $('customDivProfit').textContent=q>0?(q*porcentajeGanancia).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+  };
+}
+
 function renderDivisas(){
   const c=DIVISAS.find(x=>x.name===divisa)||DIVISAS[0],r=getDivRule(c);
   $('divisaName').textContent=c.name;
@@ -187,10 +216,12 @@ function renderDivisas(){
     const calc=q=>rev?Math.max(0,q*(1-venta/100)):q*(1+venta/100);
     $('dirBtn').classList.toggle('rev',rev);
     $('dirTitle').textContent=rev?'Divisa → USD':'USD → Divisa';
-    let html=RANGES.slice(3).map((q,i)=>{
+    const one=calc(1);
+    let html=`<tr class="green"><td class="name">1</td><td class="money">${money(calc(1),2)}</td><td class="money">${money((venta-costo)/100,2)}</td></tr>`;
+    html+=RANGES.slice(3).map((q,i)=>{
       const cls=i%3===0?'green':i%3===1?'blue':'red';
       const cliente=calc(q),gan=q*(venta-costo)/100;
-      return `<tr class="${cls}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${money(cliente,2)}</td><td class="money">${money(gan,2)}</td></tr>`
+      return `<tr class="${cls}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${money(cliente,2)}</td><td class="money">${money(gan,2)}</td></tr>`;
     }).join('');
     html+=`<tr class="custom"><td class="custom-label"><input id="customDiv" type="number" min="0" step=".01" inputmode="decimal" placeholder="${rev?'Cant. divisa':'Cant. USD'}"></td><td id="customDivClient">—</td><td id="customDivProfit">—</td></tr>`;
     $('divisaRows').innerHTML=html;
@@ -201,25 +232,11 @@ function renderDivisas(){
       $('customDivProfit').textContent=q>0?money(q*(venta-costo)/100,2):'—';
     };
   }else{
-    const baseUSDT=Number(localStorage.getItem('jp_divisas_usdt_price')||810);
-    const margin=Number(localStorage.getItem('jp_divisas_usdt_margin')||10);
-    $('divisaUsdtPrice').value=baseUSDT;
-    $('divisaUsdtMargin').value=margin;
-    const usdtConMargen=Math.max(0,baseUSDT-margin);
-    let html=RANGES.slice(3).map((q,i)=>{
-      const cls=i%3===0?'green':i%3===1?'blue':'red';
-      const cliente=q*usdtConMargen;
-      const gan=q*margin;
-      return `<tr class="${cls}"><td class="name">${q.toLocaleString('en-US')}</td><td class="money">${cliente.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="money">${gan.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td></tr>`
-    }).join('');
-    html+=`<tr class="custom"><td class="custom-label"><input id="customDiv" type="number" min="0" step=".01" inputmode="decimal" placeholder="Cant. USD"></td><td id="customDivClient">—</td><td id="customDivProfit">—</td></tr>`;
-    $('divisaRows').innerHTML=html;
-    const inp=$('customDiv');
-    inp.oninput=()=>{
-      const q=Number(inp.value);
-      $('customDivClient').textContent=q>0?(q*usdtConMargen).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
-      $('customDivProfit').textContent=q>0?(q*margin).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
-    };
+    const storedBase=localStorage.getItem('jp_divisas_usdt_price');
+    const storedMargin=localStorage.getItem('jp_divisas_usdt_margin');
+    $('divisaUsdtPrice').value=storedBase===null?'820':storedBase;
+    $('divisaUsdtMargin').value=storedMargin===null?'10':storedMargin;
+    updateCupDisplay();
   }
   $('divisaCurrencyMenu').querySelectorAll('.option').forEach(o=>o.classList.toggle('active',o.dataset.currency===divisaCurrency));
 }
@@ -241,22 +258,26 @@ $('divisaCurrencyMenu').querySelectorAll('.option').forEach(o=>o.onclick=e=>{
   renderDivisas();
 });
 $('divisaUsdtPrice').oninput=()=>{
-  localStorage.setItem('jp_divisas_usdt_price', $('divisaUsdtPrice').value || '810');
-  if(divisaCurrency==='CUP') renderDivisas();
+  localStorage.setItem('jp_divisas_usdt_price', $('divisaUsdtPrice').value);
+  if(divisaCurrency==='CUP') updateCupDisplay();
 };
 $('divisaUsdtMargin').oninput=()=>{
-  localStorage.setItem('jp_divisas_usdt_margin', $('divisaUsdtMargin').value || '10');
-  if(divisaCurrency==='CUP') renderDivisas();
+  localStorage.setItem('jp_divisas_usdt_margin', $('divisaUsdtMargin').value);
+  if(divisaCurrency==='CUP') updateCupDisplay();
 };
 
 function render(){app.classList.toggle('mode-divisas',mode==='divisas');app.classList.toggle('mode-remesas',mode==='remesas');$('navDivisas').classList.toggle('active',mode==='divisas');$('navRemesas').classList.toggle('active',mode==='remesas');buildRemMenu();buildDivMenu();renderRemesas();renderDivisas()}
 function switchMode(m){mode=m;localStorage.setItem('jp_mode',m);render()}
 $('remesaSelector').onclick=e=>{e.stopPropagation();$('remesaMenu').classList.toggle('show');$('divisaMenu').classList.remove('show');$('divisaCurrencyMenu').classList.remove('show')};$('divisaSelector').onclick=e=>{e.stopPropagation();$('divisaMenu').classList.toggle('show');$('remesaMenu').classList.remove('show');$('divisaCurrencyMenu').classList.remove('show')};document.onclick=()=>{$('remesaMenu').classList.remove('show');$('divisaMenu').classList.remove('show');$('divisaCurrencyMenu').classList.remove('show')};
-['baseRate','margin','costo','venta'].forEach(id=>$(id).oninput=()=>{if(id==='costo'||id==='venta'){const c=DIVISAS.find(x=>x.name===divisa);localStorage.setItem('jp_divrule_'+c.name,JSON.stringify({costo:Number($('costo').value)||0,venta:Number($('venta').value)||0}))}render()});
+$('baseRate').oninput=()=>{localStorage.setItem('jp_base_rate',$('baseRate').value);renderRemesas()};
+$('margin').oninput=()=>{localStorage.setItem('jp_margin',$('margin').value);renderRemesas()};
+$('margin').onblur=()=>{if($('margin').value==='')$('margin').value='0';renderRemesas()};
+$('baseRate').onblur=()=>{if($('baseRate').value==='')$('baseRate').value='0';renderRemesas()};
+['costo','venta'].forEach(id=>$(id).oninput=()=>{const c=DIVISAS.find(x=>x.name===divisa);localStorage.setItem('jp_divrule_'+c.name,JSON.stringify({costo:Number($('costo').value)||0,venta:Number($('venta').value)||0}));if(divisaCurrency==='USD')renderDivisas()});
 function openSettings(){const isR=mode==='remesas';$('remesaSettings').style.display=isR?'block':'none';$('divisaSettings').style.display=isR?'none':'block';$('ruleCurrency').innerHTML=REMESAS.map(c=>`<option>${c.name}</option>`).join('');$('divisaRuleCurrency').innerHTML=DIVISAS.map(c=>`<option>${c.name}</option>`).join('');$('ruleCurrency').value=remesa;$('divisaRuleCurrency').value=divisa;loadSettingsFields();$('settingsOverlay').classList.add('show')}
-function loadSettingsFields(){if(mode==='remesas'){const c=REMESAS.find(x=>x.name===$('ruleCurrency').value),r=getRule(c);$('ruleType').value=r.type;$('ruleValue').value=r.value}else{const c=DIVISAS.find(x=>x.name===$('divisaRuleCurrency').value),r=getDivRule(c);$('ruleCosto').value=r.costo;$('ruleVenta').value=r.venta;const cup=$('cupRuleSettings');cup.style.display=divisaCurrency==='CUP'?'block':'none';$('ruleCupUsdt').value=localStorage.getItem('jp_divisas_usdt_price')||'810';$('ruleCupMargin').value=localStorage.getItem('jp_divisas_usdt_margin')||'10'}}
+function loadSettingsFields(){if(mode==='remesas'){const c=REMESAS.find(x=>x.name===$('ruleCurrency').value),r=getRule(c);$('ruleType').value=r.type;$('ruleValue').value=r.value}else{const c=DIVISAS.find(x=>x.name===$('divisaRuleCurrency').value),r=getDivRule(c);$('ruleCosto').value=r.costo;$('ruleVenta').value=r.venta;$('ruleCupCosto').value=r.costo;const cup=$('cupRuleSettings');cup.style.display=divisaCurrency==='CUP'?'block':'none';$('ruleCupUsdt').value=localStorage.getItem('jp_divisas_usdt_price')||'810';$('ruleCupMargin').value=localStorage.getItem('jp_divisas_usdt_margin')||'10'}}
 $('ruleCurrency').onchange=loadSettingsFields;$('divisaRuleCurrency').onchange=loadSettingsFields;
-function saveSettings(){if(mode==='remesas'){remesa=$('ruleCurrency').value;localStorage.setItem('jp_remesa',remesa);localStorage.setItem('jp_rule_'+remesa,JSON.stringify({type:$('ruleType').value,value:Number($('ruleValue').value)||0}))}else{divisa=$('divisaRuleCurrency').value;localStorage.setItem('jp_divisa',divisa);localStorage.setItem('jp_divrule_'+divisa,JSON.stringify({costo:Number($('ruleCosto').value)||0,venta:Number($('ruleVenta').value)||0}));if(divisaCurrency==='CUP'){localStorage.setItem('jp_divisas_usdt_price',String(Number($('ruleCupUsdt').value)||810));localStorage.setItem('jp_divisas_usdt_margin',String(Number($('ruleCupMargin').value)||10))}}closeSettings();render();toast('Cambios guardados')}
+function saveSettings(){if(mode==='remesas'){remesa=$('ruleCurrency').value;localStorage.setItem('jp_remesa',remesa);localStorage.setItem('jp_rule_'+remesa,JSON.stringify({type:$('ruleType').value,value:Number($('ruleValue').value)||0}))}else{divisa=$('divisaRuleCurrency').value;if(divisaCurrency==='CUP'){const costo=Number($('ruleCupCosto').value)||0;const current=getDivRule(DIVISAS.find(x=>x.name===divisa));localStorage.setItem('jp_divrule_'+divisa,JSON.stringify({costo,venta:current.venta}));localStorage.setItem('jp_divisas_usdt_price',String(Number($('ruleCupUsdt').value)||810));localStorage.setItem('jp_divisas_usdt_margin',String(Number($('ruleCupMargin').value)||10))}else{localStorage.setItem('jp_divrule_'+divisa,JSON.stringify({costo:Number($('ruleCosto').value)||0,venta:Number($('ruleVenta').value)||0}))}localStorage.setItem('jp_divisa',divisa)}closeSettings();render();toast('Cambios guardados')}
 function resetCurrentRule(){if(mode==='remesas'){localStorage.removeItem('jp_rule_'+$('ruleCurrency').value)}else{localStorage.removeItem('jp_divrule_'+$('divisaRuleCurrency').value);if(divisaCurrency==='CUP'){localStorage.removeItem('jp_divisas_usdt_price');localStorage.removeItem('jp_divisas_usdt_margin')}}loadSettingsFields();render();toast('Regla original restaurada')}
 function closeSettings(){$('settingsOverlay').classList.remove('show')}
 function setTheme(t){if(t==='system'){localStorage.removeItem('jp_theme');document.documentElement.removeAttribute('data-theme')}else{localStorage.setItem('jp_theme',t);document.documentElement.setAttribute('data-theme',t)}document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.theme===t))}
