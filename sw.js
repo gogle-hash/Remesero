@@ -1,4 +1,4 @@
-const CACHE = "remesas-pwa-v14"; // ⚠️ IMPORTANTE: Cambia este número (v3, v4, v5) cada vez que subas cambios a GitHub
+const CACHE = "remesas-pwa-v15"; // ⚠️ IMPORTANTE: Cambia este número (v3, v4, v5) cada vez que subas cambios a GitHub
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 // Instalar e inmediatamente forzar activación (skipWaiting)
