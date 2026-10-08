@@ -186,7 +186,9 @@ function updateCupDisplay(){
   // Regla CUP: después de restar el margen, se divide directamente por el divisor.
   // Clásica 1.07 · Prepago 1.11 · MLC 1.65.
   const usdtFinal=divisor>0?usdtConMargen/divisor:usdtConMargen;
-  const porcentajeGanancia=Math.max(0,usdtConMargen-usdtFinal);
+  // Ganancia real: el margen se gana por cada USDT. Igual que en Remesas: USDT equivalentes × margen.
+  const usdtEquivalente=divisor>0?1/divisor:1;
+  const porcentajeGanancia=Math.max(0,usdtEquivalente*margin);
   let html=`<tr class="green"><td class="name">1</td><td class="money">${usdtFinal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="money">${porcentajeGanancia.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td></tr>`;
   html+=RANGES.slice(3).map((q,i)=>{
     const cls=i%3===0?'green':i%3===1?'blue':'red';
